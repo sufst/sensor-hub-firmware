@@ -71,4 +71,4 @@ ehthumbs_vista.db
 *.stackdump
 $RECYCLE.BIN/
 misra.txt
-*.trx
+local/

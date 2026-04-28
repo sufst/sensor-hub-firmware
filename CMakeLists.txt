@@ -28,11 +28,21 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 project(${CMAKE_PROJECT_NAME})
 message("Build type: " ${CMAKE_BUILD_TYPE})
 
+if(NOT DEFINED SENSOR_HUB_CONFIG)
+    message(FATAL_ERROR
+        "SENSOR_HUB_CONFIG is not set. "
+        "Run via 'uv run build <config.csv>' or pass -DSENSOR_HUB_CONFIG=<name> to cmake."
+    )
+endif()
+set(SENSOR_HUB_GENERATED_DIR ${CMAKE_SOURCE_DIR}/Generated/${SENSOR_HUB_CONFIG})
+message("Sensor hub config: " ${SENSOR_HUB_CONFIG})
+
 # Enable CMake support for ASM and C languages
 enable_language(C ASM)
 
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME})
+set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES OUTPUT_NAME "sensor-hub-${SENSOR_HUB_CONFIG}")
 
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
@@ -44,12 +54,14 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
-    # Add user sources here
+    ${SENSOR_HUB_GENERATED_DIR}/sensor_hub.c
+    SUFST/Src/sensors.c
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
-    # Add user defined include paths
+    ${SENSOR_HUB_GENERATED_DIR}
+    SUFST/Inc
 )
 
 # Add project symbols (macros)

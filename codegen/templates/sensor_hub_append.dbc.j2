@@ -1,0 +1,16 @@
+{# Template for <ecu_name>.dbc #}
+VERSION ""
+
+NS_ :
+
+BS_:
+
+BU_: {{ ecu_name }}
+
+{% for msg in all_messages %}
+BO_ {{ msg.can_id }} {{ msg.name }}: {{ msg.dlc }} {{ ecu_name }}
+{% for sig in msg.signals %}
+ SG_ {{ sig.signal_name }} : {{ sig.start_bit }}|{{ sig.length }}{{ sig.value_type | default('@1+') }} ({{ sig.scale }},{{ sig.offset }}) [{{ sig.min }}|{{ sig.max }}] "{{ sig.unit }}" Vector__XXX
+{% endfor %}
+
+{% endfor %}

@@ -26,7 +26,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "sensor_hub.h"
+#include "sensors.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -95,7 +96,8 @@ int main(void)
   MX_I2C1_Init();
   MX_USART1_Init();
   /* USER CODE BEGIN 2 */
-
+  SensorHub_Init();
+  Sensors_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -105,6 +107,9 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    SensorHub_Transmit();
+    Sensors_Transmit();
+    HAL_Delay(10);
   }
   /* USER CODE END 3 */
 }

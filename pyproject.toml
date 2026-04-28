@@ -1,0 +1,27 @@
+[project]
+name = "sensor-hub-firmware"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12"
+dependencies = [
+    "cantools>=41.3.1",
+    "click>=8.3.3",
+    "jinja2>=3.1.6",
+    "pandas>=3.0.2",
+    "pydantic>=2.13.3",
+]
+
+[project.scripts]
+generate = "codegen.cli:generate_cmd"
+build = "codegen.cli:build_cmd"
+build-all = "codegen.cli:build_all_cmd"
+
+[tool.uv]
+package = true
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["codegen"]
