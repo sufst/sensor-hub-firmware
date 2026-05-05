@@ -25,7 +25,9 @@ Files should be generated in `Generated/default` and `build/default_release`.
 
 ## Configuring and flashing a board
 For a new board:
+
 1. Copy `Configs/default.csv` to `Configs/<board_name>.csv`
+
 2. Fill it in `Configs/<board_name>.csv` (e.g. use Microsoft Excel):
     - ECU Name
     - Message ID bases (analog and digital, base because if more than 1 message is required it's incremented)
@@ -35,16 +37,21 @@ For a new board:
         - leave ports disabled that aren't connected to anything
     - Which ports to treat as analog/digital
     - Resistor configuration (capacitor is optional for reference)
+
 3. Run the build
 ```sh
 uv run build Configs/<board_name>.csv
 ```
 (or alternatively `uv run build-all` to build all boards)
+
 4. Flash to the board
 Use STM32CubeProgrammer on the generated .elf in `build/<board_name>_release/sensor-hub-<board_name>.elf`
+
 5. Update the DBC definition in [sufst/can-defs](https://github.com/sufst/can-defs) (see below)
+
 ### Using the generated DBC
 6. Import `Generated/<board_name>/<ecu_name>.dbc` into the desired can definition (e.g. [sufst/can-defs](https://github.com/sufst/can-defs))
+
 7. Profit 🤑 (maybe test it first)
 
 ## Troubleshooting
