@@ -48,7 +48,9 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     data[7] = (uint8_t)(((SENSOR_HUB_BL_1 >> 8U) & 0x0FU));
     hdr.StdId = GENERIC_SENSOR_HUB_ANALOG_ID;
     hdr.DLC   = GENERIC_SENSOR_HUB_ANALOG_DLC;
-    if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
+    if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
+        if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
+    }
 
     /* GENERIC_SENSOR_HUB_DIGITAL — pins in analog mode, ADC-read and thresholded at midpoint */
     uint8_t SENSOR_HUB_BL_4 = (_read_adc(ADC_CHANNEL_14) > 2047U) ? 1U : 0U;  /* PC4 */
@@ -66,6 +68,8 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     data[1] = (uint8_t)((SENSOR_HUB_BR_4 & 0x01U) | ((SENSOR_HUB_BR_7 & 0x01U) << 1U) | ((SENSOR_HUB_BR_10 & 0x01U) << 2U));
     hdr.StdId = GENERIC_SENSOR_HUB_DIGITAL_ID;
     hdr.DLC   = GENERIC_SENSOR_HUB_DIGITAL_DLC;
-    if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
+    if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
+        if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
+    }
     return HAL_OK;
 }

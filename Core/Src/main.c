@@ -145,7 +145,8 @@ int main(void)
         uint32_t mailbox;
         uint8_t  status = Sensors_GetStatus();
 
-        if (HAL_CAN_AddTxMessage(&hcan1, &shdr, &status, &mailbox) != HAL_OK || s_can_err) {
+        if ((HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U &&
+             HAL_CAN_AddTxMessage(&hcan1, &shdr, &status, &mailbox) != HAL_OK) || s_can_err) {
           s_can_err = 0U;
           blink_error_led();
         }

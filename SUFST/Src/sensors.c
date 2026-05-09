@@ -64,7 +64,9 @@ HAL_StatusTypeDef Sensors_Transmit(void)
         memcpy(data, buf, 6);
         hdr.StdId = SENSOR_HUB_IMU_ACCEL_ID;
         hdr.DLC   = SENSOR_HUB_IMU_ACCEL_DLC;
-        if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { can_err = 1U; }
+        if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
+            if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { can_err = 1U; }
+        }
     }
 
     /* --- IMU gyroscope (6 bytes, little-endian X/Y/Z) --- */
@@ -72,7 +74,9 @@ HAL_StatusTypeDef Sensors_Transmit(void)
         memcpy(data, buf, 6);
         hdr.StdId = SENSOR_HUB_IMU_GYRO_ID;
         hdr.DLC   = SENSOR_HUB_IMU_GYRO_DLC;
-        if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { can_err = 1U; }
+        if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
+            if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { can_err = 1U; }
+        }
     }
 
     /* --- IMU chip temperature --- */
@@ -102,7 +106,9 @@ HAL_StatusTypeDef Sensors_Transmit(void)
     if (s_ism330_ok || s_mcp9800_ok) {
         hdr.StdId = SENSOR_HUB_TEMP_ID;
         hdr.DLC   = SENSOR_HUB_TEMP_DLC;
-        if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { can_err = 1U; }
+        if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
+            if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { can_err = 1U; }
+        }
     }
 
     return can_err ? HAL_ERROR : HAL_OK;

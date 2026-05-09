@@ -40,7 +40,9 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     data[2] = (uint8_t)(((DAMPER_FR >> 4U) & 0xFFU));
     hdr.StdId = PEDAL_BOX_ANALOG_ID;
     hdr.DLC   = PEDAL_BOX_ANALOG_DLC;
-    if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
+    if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
+        if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
+    }
 
     /* PEDAL_BOX_DIGITAL — pins in analog mode, ADC-read and thresholded at midpoint */
     uint8_t BSPD_STATUS = (_read_adc(ADC_CHANNEL_6) > 2047U) ? 1U : 0U;  /* PA6 */
@@ -48,6 +50,8 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     data[0] = (uint8_t)((BSPD_STATUS & 0x01U) | ((GPS_PPS & 0x01U) << 1U));
     hdr.StdId = PEDAL_BOX_DIGITAL_ID;
     hdr.DLC   = PEDAL_BOX_DIGITAL_DLC;
-    if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
+    if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
+        if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
+    }
     return HAL_OK;
 }

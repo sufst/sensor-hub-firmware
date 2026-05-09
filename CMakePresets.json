@@ -24,22 +24,6 @@
             }
         },
         {
-            "name": "default-Release",
-            "inherits": "default",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
-                "SENSOR_HUB_CONFIG": "default"
-            }
-        },
-        {
-            "name": "pedalbox-Release",
-            "inherits": "default",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
-                "SENSOR_HUB_CONFIG": "pedalbox"
-            }
-        },
-        {
             "name": "default-Debug",
             "inherits": "default",
             "cacheVariables": {
@@ -52,6 +36,22 @@
             "inherits": "default",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
+                "SENSOR_HUB_CONFIG": "pedalbox"
+            }
+        },
+        {
+            "name": "default-Release",
+            "inherits": "default",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "SENSOR_HUB_CONFIG": "default"
+            }
+        },
+        {
+            "name": "pedalbox-Release",
+            "inherits": "default",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
                 "SENSOR_HUB_CONFIG": "pedalbox"
             }
         }
@@ -66,20 +66,20 @@
             "configurePreset": "Release"
         },
         {
-            "name": "default-Release",
-            "configurePreset": "default-Release"
-        },
-        {
-            "name": "pedalbox-Release",
-            "configurePreset": "pedalbox-Release"
-        },
-        {
             "name": "default-Debug",
             "configurePreset": "default-Debug"
         },
         {
             "name": "pedalbox-Debug",
             "configurePreset": "pedalbox-Debug"
+        },
+        {
+            "name": "default-Release",
+            "configurePreset": "default-Release"
+        },
+        {
+            "name": "pedalbox-Release",
+            "configurePreset": "pedalbox-Release"
         }
     ]
 }
