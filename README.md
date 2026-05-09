@@ -63,3 +63,45 @@ And to install ninja:
 ```sh
 sudo apt install ninja-build
 ```
+
+## Debugging on Linux/WSL with gdb
+If you don't want to use STM32CubeIDE, you can use `gdb` directly which can be very useful e.g.
+```bash
+# 1. build with debug symbols
+uv run build-all --build-type Debug
+
+# 2. run this in a seperate terminal window and leave it running
+# you may need to `sudo apt install openocd`
+openocd -f interface/stlink.cfg -f target/stm32f1x.cfg
+
+# 3. debug
+# you may need to `sudo apt install gdb-multiarch`
+gdb-multiarch -tui build/pedalbox_debug/sensor-hub-pedalbox.elf # target the desired .elf
+(gdb) target remote :3333 # connect to openocd session
+(gdb) load # flash latest elf to chip
+(gdb) monitor reset halt # reset the chip
+(gdb) break main # set a breakpoint to line 1 of main()
+(gdb) continue # run until a breakpoint hits
+(gdb) break main.c:125 # set a breakpoint to line 125 of main.c
+(gdb) info break # list breakpoints
+(gdb) del 2 # or `d` - delete breakpoint 2 from list
+(gdb) continue # or `c`
+(gdb) step # or `s` - step into function
+(gdb) next # or `n` - run until next line hits at current scope
+(gdb) finish # step up
+(gdb) set s_tick = 1 # set value
+(gdb) print s_tick # read value (`p/x` for hex)
+(gdb) display s_tick # print value every time breakpoint hits
+```
+
+If you're on WSL, you can use [usbipd](https://github.com/dorssel/usbipd-win) to bind the ST-Link to Linux, e.g. on windows you might run:
+```powershell
+usbipd list
+usbipd bind --busid 2-6 # value from list
+usbipd attach --wsl --busid 2-6
+```
+
+Then in linux you can use `openocd` as described above:
+```sh
+openocd -f interface/stlink.cfg -f target/stm32f1x.cfg
+```
