@@ -105,3 +105,9 @@ Then in linux you can use `openocd` as described above:
 ```sh
 openocd -f interface/stlink.cfg -f target/stm32f1x.cfg
 ```
+
+If you have `openocd` installed, you can also use the flash script, e.g.:
+```bash
+uv run flash Configs/pedalbox.csv # release build
+uv run flash Configs/pedalbox.csv --build-type Debug # debug build (not sure why you'd want this, probably use gdb `load` directly after building instead)
+```

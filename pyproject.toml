@@ -15,6 +15,7 @@ dependencies = [
 generate = "codegen.cli:generate_cmd"
 build = "codegen.cli:build_cmd"
 build-all = "codegen.cli:build_all_cmd"
+flash = "codegen.cli:flash_cmd"
 
 [tool.uv]
 package = true

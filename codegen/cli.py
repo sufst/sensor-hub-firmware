@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import subprocess
 from pathlib import Path
 
 import click
@@ -78,6 +79,27 @@ def generate_cmd(input_csv: Path, output_dir: Path | None) -> None:
 def build_cmd(input_csv: Path, build_type: str) -> None:
     """Generate and build firmware for INPUT_CSV."""
     _run_build(input_csv, build_type)
+
+
+@click.command()
+@click.argument("input_csv", type=click.Path(exists=True, path_type=Path))
+@click.option("--build-type", type=click.Choice(["Debug", "Release"]), default="Release", show_default=True)
+@click.option("--interface", default="stlink", show_default=True, help="OpenOCD interface config name (no .cfg)")
+def flash_cmd(input_csv: Path, build_type: str, interface: str) -> None:
+    """Flash firmware for INPUT_CSV to a connected target via OpenOCD."""
+    elf = Path("build") / f"{input_csv.stem}_{build_type.lower()}" / f"sensor-hub-{input_csv.stem}.elf"
+    if not elf.exists():
+        raise click.ClickException(f"ELF not found at {elf} — run 'build' first")
+    cmd = [
+        "openocd",
+        "-f", f"interface/{interface}.cfg",
+        "-f", "target/stm32f1x.cfg",
+        "-c", f"program {elf} verify reset exit",
+    ]
+    click.echo(f"Flashing {elf} ...")
+    if subprocess.run(cmd).returncode != 0:
+        raise click.ClickException("OpenOCD exited with errors")
+    click.echo("Flash complete.")
 
 
 @click.command()
