@@ -3,6 +3,8 @@ ECU Name,GENERIC_SENSOR_HUB,,,,,,,,,
 Analog Base ID,0x670,ceil(n/5) IDs - 1 frame per 5 channels,max 4 frames for a 16-channel board,,,,,,,
 Digital Base ID,0x675,ceil(n/64) IDs - 1 frame per 64 channels,max 1 frame for a 16-channel board,,,,,,,
 I2C Base ID,0x676,always 3 IDs - +0 accel +1 gyro +2 temp,fixed 3 frames regardless of channel config,,,,,,,
+Status Base ID,0x679,1 ID - always 1 frame,,,,,,,,,
+Error LED Pin,PC15,active-high GPIO pin for CAN error indication,,,,,,,,,
 #,Connector Pin,IC Pin,VREF / V,CAN signal Name,Enabled?,Analog? (0=digital),Series resistor / ohms,Pull down resistor / ohms,Up value / ohms,Capacitor value / farads
 1,TL_1,PA6,3.3,SENSOR_HUB_TL_1,1,1,0,NC,NC,NC
 2,TL_4,PA5,3.3,SENSOR_HUB_TL_4,1,1,0,NC,NC,NC

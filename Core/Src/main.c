@@ -21,6 +21,7 @@
 #include "adc.h"
 #include "can.h"
 #include "i2c.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -48,7 +49,9 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+static uint32_t  s_status_tick = 0U;
+static uint8_t   s_can_err     = 0U;
+volatile uint8_t s_tick        = 0U;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -59,7 +62,15 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+static void blink_error_led(void)
+{
+  for (uint8_t i = 0U; i < 3U; i++) {
+    HAL_GPIO_WritePin(SENSOR_HUB_ERROR_LED_PORT, SENSOR_HUB_ERROR_LED_PIN, GPIO_PIN_SET);
+    HAL_Delay(150U);
+    HAL_GPIO_WritePin(SENSOR_HUB_ERROR_LED_PORT, SENSOR_HUB_ERROR_LED_PIN, GPIO_PIN_RESET);
+    HAL_Delay(150U);
+  }
+}
 /* USER CODE END 0 */
 
 /**
@@ -95,9 +106,11 @@ int main(void)
   MX_CAN1_Init();
   MX_I2C1_Init();
   MX_USART1_Init();
+  MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
   SensorHub_Init();
-  Sensors_Init();
+  if (Sensors_Init() != HAL_OK) { s_can_err = 1U; }
+  HAL_TIM_Base_Start_IT(&htim6);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -107,9 +120,30 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    SensorHub_Transmit();
-    Sensors_Transmit();
-    HAL_Delay(10);
+    if (s_tick) {
+      s_tick = 0U;
+      if (SensorHub_Transmit() != HAL_OK) { s_can_err = 1U; }
+      if (Sensors_Transmit()   != HAL_OK) { s_can_err = 1U; }
+
+      if (HAL_GetTick() - s_status_tick >= 1000U) {
+        s_status_tick = HAL_GetTick();
+
+        CAN_TxHeaderTypeDef shdr = {0};
+        shdr.StdId              = SENSOR_HUB_STATUS_ID;
+        shdr.DLC                = SENSOR_HUB_STATUS_DLC;
+        shdr.RTR                = CAN_RTR_DATA;
+        shdr.IDE                = CAN_ID_STD;
+        shdr.TransmitGlobalTime = DISABLE;
+
+        uint32_t mailbox;
+        uint8_t  status = Sensors_GetStatus();
+
+        if (HAL_CAN_AddTxMessage(&hcan1, &shdr, &status, &mailbox) != HAL_OK || s_can_err) {
+          s_can_err = 0U;
+          blink_error_led();
+        }
+      }
+    }
   }
   /* USER CODE END 3 */
 }
@@ -129,12 +163,12 @@ void SystemClock_Config(void)
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV4;
+  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV5;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.Prediv1Source = RCC_PREDIV1_SOURCE_PLL2;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL4;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
   RCC_OscInitStruct.PLL2.PLL2State = RCC_PLL2_ON;
   RCC_OscInitStruct.PLL2.PLL2MUL = RCC_PLL2_MUL8;
   RCC_OscInitStruct.PLL2.HSEPrediv2Value = RCC_HSE_PREDIV2_DIV5;
@@ -152,12 +186,12 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
   {
     Error_Handler();
   }
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
-  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV4;
+  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV6;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
@@ -169,7 +203,10 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  if (htim->Instance == TIM6) { s_tick = 1U; }
+}
 /* USER CODE END 4 */
 
 /**

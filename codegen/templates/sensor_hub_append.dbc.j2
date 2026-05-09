@@ -14,3 +14,6 @@ BO_ {{ msg.can_id }} {{ msg.name }}: {{ msg.dlc }} {{ ecu_name }}
 {% endfor %}
 
 {% endfor %}
+BO_ {{ status_id }} {{ ecu_name }}_STATUS: 1 {{ ecu_name }}
+ SG_ {{ ecu_name }}_ISM330_OK : 0|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ {{ ecu_name }}_MCP9800_OK : 1|1@1+ (1,0) [0|1] "" Vector__XXX

@@ -24,6 +24,14 @@ PIN_TO_ADC_CHANNEL: dict[str, str] = {
 }
 
 _DBC_IDENT = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+_GPIO_PIN_RE = re.compile(r"^P([A-H])(\d+)$")
+
+
+def _parse_gpio(pin_str: str) -> tuple[str, str]:
+    m = _GPIO_PIN_RE.match(pin_str.strip().upper())
+    if not m:
+        raise ValueError(f"Invalid GPIO pin '{pin_str}' (expected e.g. PC15)")
+    return f"GPIO{m.group(1)}", f"GPIO_PIN_{m.group(2)}"
 
 
 class ChannelConfig(BaseModel):
@@ -74,6 +82,9 @@ class SensorConfig(BaseModel):
     analog_base_id: int
     digital_base_id: int
     i2c_base_id: int
+    status_base_id: int
+    error_led_port: str
+    error_led_pin: str
     channels: list[ChannelConfig]
 
     @field_validator("ecu_name")
@@ -84,7 +95,7 @@ class SensorConfig(BaseModel):
             raise ValueError(f"ECU name '{v}' is not a valid DBC identifier")
         return v
 
-    @field_validator("analog_base_id", "digital_base_id", "i2c_base_id")
+    @field_validator("analog_base_id", "digital_base_id", "i2c_base_id", "status_base_id")
     @classmethod
     def valid_can_id(cls, v: int) -> int:
         if not (0 <= v <= 0x7FF):
@@ -115,12 +126,13 @@ class SensorConfig(BaseModel):
             ranges.append(("Digital", self.digital_base_id,
                           self.digital_base_id + n_digital))
         ranges.append(("I2C", self.i2c_base_id, self.i2c_base_id + 3))
+        ranges.append(("Status", self.status_base_id, self.status_base_id + 1))
         for i, (name_a, start_a, end_a) in enumerate(ranges):
             for name_b, start_b, end_b in ranges[i + 1:]:
                 if start_a < end_b and start_b < end_a:
                     raise ValueError(
-                        f"{name_a} CAN ID range 0x{start_a:03X}–0x{end_a - 1:03X} "
-                        f"overlaps {name_b} range 0x{start_b:03X}–0x{end_b - 1:03X}"
+                        f"{name_a} CAN ID range 0x{start_a:X}–0x{end_a - 1:X} "
+                        f"overlaps {name_b} range 0x{start_b:X}–0x{end_b - 1:X}"
                     )
         return self
 
@@ -134,8 +146,9 @@ class SensorConfig(BaseModel):
 
 
 def parse_csv(path: Path) -> SensorConfig:
-    # Row 0: instruction text  Row 1: ECU Name      Row 2: Analog Base ID
-    # Row 3: Digital Base ID   Row 4: I2C Base ID   Row 5: column headers  Rows 6+: channel data
+    # Row 0: instruction text  Row 1: ECU Name        Row 2: Analog Base ID
+    # Row 3: Digital Base ID   Row 4: I2C Base ID     Row 5: Status Base ID
+    # Row 6: Error LED Pin     Row 7: column headers  Rows 8+: channel data
     with path.open(newline="") as fh:
         rows = list(csv.reader(fh))
 
@@ -143,8 +156,10 @@ def parse_csv(path: Path) -> SensorConfig:
     analog_base_id = int(rows[2][1].strip(), 0)
     digital_base_id = int(rows[3][1].strip(), 0)
     i2c_base_id = int(rows[4][1].strip(), 0)
+    status_base_id = int(rows[5][1].strip(), 0)
+    led_port, led_pin = _parse_gpio(rows[6][1])
 
-    df = pd.DataFrame(rows[6:], columns=rows[5])
+    df = pd.DataFrame(rows[8:], columns=rows[7])
     channels = [
         ChannelConfig(
             number=int(row["#"]),
@@ -157,11 +172,14 @@ def parse_csv(path: Path) -> SensorConfig:
         )
         for _, row in df.iterrows()
     ]
-    
+
     return SensorConfig(
         ecu_name=ecu_name,
         analog_base_id=analog_base_id,
         digital_base_id=digital_base_id,
         i2c_base_id=i2c_base_id,
+        status_base_id=status_base_id,
+        error_led_port=led_port,
+        error_led_pin=led_pin,
         channels=channels,
     )

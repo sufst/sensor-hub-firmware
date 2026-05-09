@@ -1,4 +1,4 @@
-# Generic STM32 Sensor Hub Firmware (STM32F105RBT)
+# Generic STM32 Sensor Hub Firmware ([STM32F105RBT](https://www.youtube.com/watch?v=dQw4w9WgXcQ))
 
 ## First time repository setup
 1. Clone the repository

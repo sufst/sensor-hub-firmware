@@ -42,7 +42,7 @@ def _build_groups(
         result.append({
             "name":       name,
             "can_id":     can_id,
-            "can_id_hex": f"0x{can_id:03X}",
+            "can_id_hex": f"0x{can_id:X}",
             "id_define":  f"{name}_ID",
             "dlc":        dlc,
             "dlc_define": f"{name}_DLC",
@@ -54,17 +54,15 @@ def _build_groups(
     return result
 
 
-def build_message_groups(
-    config: SensorConfig, analog_base_id: int, digital_base_id: int
-) -> tuple[list[dict], list[dict]]:
+def build_message_groups(config: SensorConfig) -> tuple[list[dict], list[dict]]:
     analog = _build_groups(
         config.ecu_name, config.enabled_analog,
-        analog_base_id, MAX_ANALOG_PER_MSG,
+        config.analog_base_id, MAX_ANALOG_PER_MSG,
         "ANALOG", analog_pack_lines, analog_signal_specs,
     )
     digital = _build_groups(
         config.ecu_name, config.enabled_digital,
-        digital_base_id, MAX_DIGITAL_PER_MSG,
+        config.digital_base_id, MAX_DIGITAL_PER_MSG,
         "DIGITAL", digital_pack_lines, digital_signal_specs,
     )
     return analog, digital
@@ -79,7 +77,7 @@ def build_i2c_groups(config: SensorConfig) -> list[dict]:
         return {
             "name":       name,
             "can_id":     can_id,
-            "can_id_hex": f"0x{can_id:03X}",
+            "can_id_hex": f"0x{can_id:X}",
             "id_define":  f"{name}_ID",
             "dlc":        dlc,
             "dlc_define": f"{name}_DLC",

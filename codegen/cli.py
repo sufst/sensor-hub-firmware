@@ -4,7 +4,7 @@ from pathlib import Path
 
 import click
 
-from codegen.cmake import cmake_build
+from codegen.cmake import cmake_build, update_presets
 from codegen.messages import build_i2c_groups, build_message_groups, validate_with_cantools
 from codegen.models import parse_csv
 from codegen.rendering import render_outputs
@@ -21,9 +21,7 @@ def _run_generate(input_csv: Path, output_dir: Path | None) -> Path:
     click.echo(f"  Analog  : {len(config.enabled_analog)} enabled channel(s)")
     click.echo(f"  Digital : {len(config.enabled_digital)} enabled channel(s)")
 
-    analog_groups, digital_groups = build_message_groups(
-        config, config.analog_base_id, config.digital_base_id
-    )
+    analog_groups, digital_groups = build_message_groups(config)
     i2c_groups = build_i2c_groups(config)
 
     click.echo("Validating signal packing with cantools ...")
@@ -58,6 +56,7 @@ def _run_build(input_csv: Path, build_type: str) -> None:
     _run_generate(input_csv, None)
 
     source_dir = Path.cwd()
+    update_presets(source_dir, input_csv.stem, build_type)
     build_dir = source_dir / "build" / f"{input_csv.stem}_{build_type.lower()}"
     click.echo(f"\nBuilding → {build_dir} ...")
     cmake_build(source_dir, build_dir, input_csv.stem, build_type)

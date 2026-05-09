@@ -27,6 +27,10 @@ def render_outputs(
         "digital_groups": digital_groups,
         "i2c_groups":     i2c_groups,
         "all_messages":   analog_groups + digital_groups + i2c_groups,
+        "status_id":      config.status_base_id,
+        "status_id_hex":  f"0x{config.status_base_id:X}",
+        "error_led_port": config.error_led_port,
+        "error_led_pin":  config.error_led_pin,
     }
     header = env.get_template("sensor_hub.h.j2").render(**ctx)
     source = env.get_template("sensor_hub.c.j2").render(**ctx)

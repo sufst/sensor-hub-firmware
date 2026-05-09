@@ -1,4 +1,6 @@
 #pragma once
+#include "stm32f1xx_hal.h"
 
-void Sensors_Init(void);
-void Sensors_Transmit(void);
+HAL_StatusTypeDef Sensors_Init(void);
+HAL_StatusTypeDef Sensors_Transmit(void);
+uint8_t           Sensors_GetStatus(void);
