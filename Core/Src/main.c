@@ -110,6 +110,13 @@ int main(void)
   /* USER CODE BEGIN 2 */
   SensorHub_Init();
   if (Sensors_Init() != HAL_OK) { s_can_err = 1U; }
+  
+  uint8_t found[128] = {0};
+  for (uint8_t addr = 0x08; addr < 0x78; addr++) {
+      if (HAL_I2C_IsDeviceReady(&hi2c1, addr << 1, 1, 10) == HAL_OK)
+          found[addr] = 1;
+  }
+
   HAL_TIM_Base_Start_IT(&htim6);
   /* USER CODE END 2 */
 
