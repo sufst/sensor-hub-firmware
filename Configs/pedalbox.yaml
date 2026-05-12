@@ -16,16 +16,16 @@ hardware:
   broadcast_period_ms: 500
 
 # Channel Definitions
-# id:          Physical label on the board (e.g., L1, R4)
-# pin:         STM32 IC Pin name. Must correspond to an active ADC/GPIO
-# vref:        Reference voltage for analog scaling (ignored if analog=false)
-# enabled:     If false, the channel is completely omitted from codegen
-# name:        Valid DBC identifier (no spaces, starts with letter)
-# analog:      If true, reads via ADC. If false, reads via HAL_GPIO
-# series:      e.g. "1k", "4.7k", "10k", or "0"
-# pullup:      e.g. "1k", "4.7k", "10k", or "NC"
-# pulldown:    e.g. "1k", "4.7k", "10k", or "NC"
-# cap:         e.g. "1u", "100n", or "NC"
+# id:              Physical label on the board (e.g., L1, R4)
+# pin:             STM32 IC Pin name. Must correspond to an active ADC/GPIO
+# vref:            Reference voltage for analog scaling (ignored if analog=false)
+# enabled:         If false, the channel is completely omitted from codegen
+# name:            Valid DBC identifier (no spaces, starts with letter)
+# analog:          If true, reads via ADC. If false, reads via HAL_GPIO
+# series:          e.g. "1k", "4.7k", "10k", or "0", documentation only
+# pullup:          e.g. "1k", "4.7k", "10k", or "NC", documentation only (since you can't do non-linear calculations in a DBC, the STM32F105 has no FPU, it's probably best to do this on the MoTeC e.g. using Calculations -> 2D Tables)
+# pulldown:        e.g. "1k", "4.7k", "10k", or "NC", documentation only
+# cap:             e.g. "1u", "100n", or "NC", documentation only
 channels:
   - { id: "L1", pin: "PB0", vref: 3.3, enabled: true,  name: "DAMPER_FL",   analog: true,  series: "4.7k", pullup: "NC", pulldown: "NC", cap: "1u" }
   - { id: "L2", pin: "PC4", vref: 3.3, enabled: true,  name: "DAMPER_FR",   analog: true,  series: "4.7k", pullup: "NC", pulldown: "NC", cap: "1u" }
