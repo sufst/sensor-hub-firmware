@@ -1,0 +1,50 @@
+# ===
+# Sensor Hub Configuration Template
+# Instructions: Copy to <board_name>.yaml and remove unused channels/fields.
+# ===
+
+ecu_name: GENERIC_SENSOR_HUB
+
+# Base IDs for the 11-bit standard CAN frames (0x000 - 0x7FF)
+can_base_ids:
+  analog:  0x670
+  digital: 0x675
+  i2c:     0x676
+  status:  0x679
+
+# Board-specific hardware overrides
+hardware:
+  error_led: PC15
+  # Used for calculating timer prescaler/period values
+  clock_speed_hz: 72_000_000
+  # Overrides the timer settings before the timer starts
+  broadcast_period_ms: 500
+
+# Channel Definitions
+# id:              Physical label on the board (e.g., L1, R4)
+# pin:             STM32 IC Pin name. Must correspond to an active ADC/GPIO
+# vref:            Reference voltage for analog scaling (ignored if analog=false)
+# enabled:         If false, the channel is completely omitted from codegen
+# name:            Valid DBC identifier (no spaces, starts with letter)
+# analog:          If true, reads via ADC. If false, reads via HAL_GPIO
+# series:          e.g. "1k", "4.7k", "10k", or "0", documentation only
+# pullup:          e.g. "1k", "4.7k", "10k", or "NC", documentation only (since you can't do non-linear calculations in a DBC, the STM32F105 has no FPU, it's probably best to do this on the MoTeC e.g. using Calculations -> 2D Tables)
+# pulldown:        e.g. "1k", "4.7k", "10k", or "NC", documentation only
+# cap:             e.g. "1u", "100n", or "NC", documentation only
+channels:
+  - { id: "L1", pin: "PB0", vref: 3.3, enabled: true, name: "SENSOR_HUB_L1", analog: true,  series: "0", pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "L2", pin: "PC4", vref: 3.3, enabled: true, name: "SENSOR_HUB_L2", analog: false, series: "0", pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "L3", pin: "PB1", vref: 3.3, enabled: true, name: "SENSOR_HUB_L3", analog: false, series: "0", pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "L4", pin: "PC5", vref: 3.3, enabled: true, name: "SENSOR_HUB_L4", analog: false, series: "0", pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "L5", pin: "PA6", vref: 3.3, enabled: true, name: "SENSOR_HUB_L5", analog: true,  series: "0", pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "L6", pin: "PA5", vref: 3.3, enabled: true, name: "SENSOR_HUB_L6", analog: true,  series: "0", pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "L7", pin: "PA7", vref: 3.3, enabled: true, name: "SENSOR_HUB_L7", analog: true,  series: "0", pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "L8", pin: "PA4", vref: 3.3, enabled: true, name: "SENSOR_HUB_L8", analog: true,  series: "0", pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "R1", pin: "PC2", vref: 3.3, enabled: true, name: "SENSOR_HUB_R1", analog: true,  series: "0", pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "R2", pin: "PC0", vref: 3.3, enabled: true, name: "SENSOR_HUB_R2", analog: false, series: "0", pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "R3", pin: "PC3", vref: 3.3, enabled: true, name: "SENSOR_HUB_R3", analog: false, series: "0", pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "R4", pin: "PC1", vref: 3.3, enabled: true, name: "SENSOR_HUB_R4", analog: false, series: "0", pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "R5", pin: "PA0", vref: 3.3, enabled: true, name: "SENSOR_HUB_R5", analog: true,  series: "0", pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "R6", pin: "PA2", vref: 3.3, enabled: true, name: "SENSOR_HUB_R6", analog: true,  series: "0", pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "R7", pin: "PA1", vref: 3.3, enabled: true, name: "SENSOR_HUB_R7", analog: true,  series: "0", pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "R8", pin: "PA3", vref: 3.3, enabled: true, name: "SENSOR_HUB_R8", analog: true,  series: "0", pullup: "NC", pulldown: "NC", cap: "NC" }

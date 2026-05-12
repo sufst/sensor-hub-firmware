@@ -1,0 +1,45 @@
+ecu_name: PEDAL_BOX
+
+# Base IDs for the 11-bit standard CAN frames (0x000 - 0x7FF)
+can_base_ids:
+  analog:  0x670
+  digital: 0x675
+  i2c:     0x676
+  status:  0x679
+
+# Board-specific hardware overrides
+hardware:
+  error_led: PC15
+  # Used for calculating timer prescaler/period values 
+  clock_speed_hz: 72_000_000
+  # Overrides the timer settings before the timer starts
+  broadcast_period_ms: 500
+
+# Channel Definitions
+# id:          Physical label on the board (e.g., L1, R4)
+# pin:         STM32 IC Pin name. Must correspond to an active ADC/GPIO
+# vref:        Reference voltage for analog scaling (ignored if analog=false)
+# enabled:     If false, the channel is completely omitted from codegen
+# name:        Valid DBC identifier (no spaces, starts with letter)
+# analog:      If true, reads via ADC. If false, reads via HAL_GPIO
+# series:      e.g. "1k", "4.7k", "10k", or "0"
+# pullup:      e.g. "1k", "4.7k", "10k", or "NC"
+# pulldown:    e.g. "1k", "4.7k", "10k", or "NC"
+# cap:         e.g. "1u", "100n", or "NC"
+channels:
+  - { id: "L1", pin: "PB0", vref: 3.3, enabled: true,  name: "DAMPER_FL",   analog: true,  series: "4.7k", pullup: "NC", pulldown: "NC", cap: "1u" }
+  - { id: "L2", pin: "PC4", vref: 3.3, enabled: true,  name: "DAMPER_FR",   analog: true,  series: "4.7k", pullup: "NC", pulldown: "NC", cap: "1u" }
+  - { id: "L3", pin: "PB1", vref: 3.3, enabled: false, name: "unused",      analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "L4", pin: "PC5", vref: 3.3, enabled: false, name: "unused",      analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "L5", pin: "PA6", vref: 3.3, enabled: true,  name: "BSPD_STATUS", analog: false, series: "3.3k", pullup: "NC", pulldown: "1k", cap: "NC" }
+  - { id: "L6", pin: "PA5", vref: 3.3, enabled: true,  name: "GPS_PPS",     analog: false, series: "3.3k", pullup: "NC", pulldown: "1k", cap: "NC" }
+  - { id: "L7", pin: "PA7", vref: 3.3, enabled: false, name: "unused",      analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "L8", pin: "PA4", vref: 3.3, enabled: false, name: "unused",      analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "R1", pin: "PC2", vref: 3.3, enabled: false, name: "unused",      analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "R2", pin: "PC0", vref: 3.3, enabled: false, name: "unused",      analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "R3", pin: "PC3", vref: 3.3, enabled: false, name: "unused",      analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "R4", pin: "PC1", vref: 3.3, enabled: false, name: "unused",      analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "R5", pin: "PA0", vref: 3.3, enabled: false, name: "unused",      analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "R6", pin: "PA2", vref: 3.3, enabled: false, name: "unused",      analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "R7", pin: "PA1", vref: 3.3, enabled: false, name: "unused",      analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "R8", pin: "PA3", vref: 3.3, enabled: false, name: "unused",      analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }

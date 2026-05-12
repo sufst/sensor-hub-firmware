@@ -1,19 +1,17 @@
-from __future__ import annotations
-
 from pathlib import Path
 
+import cantools
 from jinja2 import Environment, FileSystemLoader
 
-from codegen.models import SensorConfig
+from codegen.models.config import SensorConfig
+from codegen.models.view import HardwareView, MessageView
 
 _TEMPLATES_DIR = Path(__file__).parent / "templates"
 
 
 def render_outputs(
     config: SensorConfig,
-    analog_groups: list[dict],
-    digital_groups: list[dict],
-    i2c_groups: list[dict],
+    messages: list[MessageView],
 ) -> tuple[str, str, str]:
     env = Environment(
         loader=FileSystemLoader(str(_TEMPLATES_DIR)),
@@ -21,18 +19,36 @@ def render_outputs(
         lstrip_blocks=True,
         keep_trailing_newline=True,
     )
-    ctx = {
-        "ecu_name":       config.ecu_name,
-        "analog_groups":  analog_groups,
-        "digital_groups": digital_groups,
-        "i2c_groups":     i2c_groups,
-        "all_messages":   analog_groups + digital_groups + i2c_groups,
-        "status_id":      config.status_base_id,
-        "status_id_hex":  f"0x{config.status_base_id:X}",
-        "error_led_port": config.error_led_port,
-        "error_led_pin":  config.error_led_pin,
-    }
-    header = env.get_template("sensor_hub.h.j2").render(**ctx)
-    source = env.get_template("sensor_hub.c.j2").render(**ctx)
-    dbc = env.get_template("sensor_hub_append.dbc.j2").render(**ctx)
+
+    hardware = HardwareView(
+        prescaler=config.hardware.prescaler,
+        period=config.hardware.period,
+        led_port=config.hardware.error_led.port,
+        led_pin=config.hardware.error_led.pin_macro,
+    )
+    status_id = config.can_base_ids.status
+    # I2C frames are transmitted from SUFST/Src/sensors.c, not SensorHub_Transmit
+    c_messages = [m for m in messages if m.c_signals]
+
+    header = env.get_template("sensor_hub.h.j2").render(
+        messages=messages,
+        hardware=hardware,
+        status_id_hex=f"0x{status_id:X}",
+    )
+    source = env.get_template("sensor_hub.c.j2").render(
+        messages=c_messages,
+        hardware=hardware,
+    )
+    dbc = env.get_template("ecu.dbc.j2").render(
+        ecu_name=config.ecu_name,
+        all_messages=messages,
+        status_id=status_id,
+        status_id_hex=f"0x{status_id:X}",
+    )
+
+    try:
+        cantools.database.load_string(dbc)
+    except cantools.database.UnsupportedDatabaseFormatError as exc:
+        raise RuntimeError(f"Generated DBC failed cantools round-trip: {exc}") from exc
+
     return header, source, dbc

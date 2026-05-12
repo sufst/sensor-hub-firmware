@@ -26,21 +26,28 @@ Files should be generated in `Generated/default` and `build/default_release`.
 ## Configuring and flashing a board
 For a new board:
 
-1. Copy `Configs/default.csv` to `Configs/<board_name>.csv`
+1. Copy `Configs/default.yaml` to `Configs/<board_name>.yaml`
 
-2. Fill it in `Configs/<board_name>.csv` (e.g. use Microsoft Excel):
-    - ECU Name
-    - Message ID bases (analog and digital, base because if more than 1 message is required it's incremented)
-    - Which ports are enabled/disabled 
-        - for the half size one, it's the first 8
-        - for the full size it's all 16
-        - leave ports disabled that aren't connected to anything
-    - Which ports to treat as analog/digital
-    - Resistor configuration (capacitor is optional for reference)
+2. Edit `Configs/<board_name>.yaml`:
+    - `ecu_name` — DBC identifier for this board (e.g. `PEDAL_BOX`)
+    - `can_base_ids` — base 11-bit IDs for the `analog`, `digital`, `i2c`, and `status` frames. Bases are incremented when more than one message is needed (e.g. >5 enabled analog channels → `_ANALOG_1`, `_ANALOG_2`). Python validates that the resulting ranges don't collide.
+    - `hardware`:
+        - `error_led` — pin for the error indicator (e.g. `PC15`)
+        - `clock_speed_hz` — internal bus clock; used to derive the timer prescaler
+        - `broadcast_period_ms` — CAN broadcast period; used to derive the timer auto-reload
+    - `channels` — one entry per physical port:
+        - `id`, `pin` — board label (e.g. `L1`) and STM32 pin (e.g. `PB0`).
+        - `enabled` — set `false` to omit the channel entirely from codegen
+        - `name` — DBC signal name (valid identifier, ≤32 chars)
+        - `analog` — `true` reads via ADC, `false` reads via `HAL_GPIO_ReadPin`
+        - `vref` — analog reference voltage for DBC scaling (ignored when `analog: false`)
+        - `series`, `pullup`, `pulldown`, `cap` — documentation only (no codegen effect; do non-linear scaling on the MoTeC side)
+
+    For the half-size board, only the first 8 channels are populated; the full size uses all 16. Leave unused ports `enabled: false`.
 
 3. Run the build
 ```sh
-uv run build Configs/<board_name>.csv
+uv run build Configs/<board_name>.yaml
 ```
 (or alternatively `uv run build-all` to build all boards)
 
@@ -108,6 +115,6 @@ openocd -f interface/stlink.cfg -f target/stm32f1x.cfg
 
 If you have `openocd` installed, you can also use the flash script, e.g.:
 ```bash
-uv run flash Configs/pedalbox.csv # release build
-uv run flash Configs/pedalbox.csv --build-type Debug # debug build (not sure why you'd want this, probably use gdb `load` directly after building instead)
+uv run flash Configs/pedalbox.yaml # release build
+uv run flash Configs/pedalbox.yaml --build-type Debug # debug build (not sure why you'd want this, probably use gdb `load` directly after building instead)
 ```

@@ -31,7 +31,7 @@ message("Build type: " ${CMAKE_BUILD_TYPE})
 if(NOT DEFINED SENSOR_HUB_CONFIG)
     message(FATAL_ERROR
         "SENSOR_HUB_CONFIG is not set. "
-        "Run via 'uv run build <config.csv>' or pass -DSENSOR_HUB_CONFIG=<name> to cmake."
+        "Run via 'uv run build <config.yaml>' or pass -DSENSOR_HUB_CONFIG=<name> to cmake."
     )
 endif()
 set(SENSOR_HUB_GENERATED_DIR ${CMAKE_SOURCE_DIR}/Generated/${SENSOR_HUB_CONFIG})
@@ -56,6 +56,7 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ${SENSOR_HUB_GENERATED_DIR}/sensor_hub.c
     SUFST/Src/sensors.c
+    SUFST/Src/hal_util.c
 )
 
 # Add include paths

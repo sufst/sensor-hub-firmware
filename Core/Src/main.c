@@ -49,9 +49,10 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-static uint32_t  s_status_tick = 0U;
-static uint8_t   s_can_err     = 0U;
-volatile uint8_t s_tick        = 0U;
+static uint32_t  s_status_tick     = 0U;
+static uint8_t   s_tx_err          = 0U;
+static uint32_t  s_led_last_toggle = 0U;
+volatile uint8_t s_tick            = 0U;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -62,13 +63,13 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-static void blink_error_led(void)
+static void boot_error_flash(void)
 {
-  for (uint8_t i = 0U; i < 3U; i++) {
+  for (uint8_t i = 0U; i < 5U; i++) {
     HAL_GPIO_WritePin(SENSOR_HUB_ERROR_LED_PORT, SENSOR_HUB_ERROR_LED_PIN, GPIO_PIN_SET);
-    HAL_Delay(150U);
+    HAL_Delay(100U);
     HAL_GPIO_WritePin(SENSOR_HUB_ERROR_LED_PORT, SENSOR_HUB_ERROR_LED_PIN, GPIO_PIN_RESET);
-    HAL_Delay(150U);
+    HAL_Delay(100U);
   }
 }
 /* USER CODE END 0 */
@@ -108,14 +109,16 @@ int main(void)
   MX_USART1_Init();
   MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
-  SensorHub_Init();
-  if (Sensors_Init() != HAL_OK) { s_can_err = 1U; }
-  
-  uint8_t found[128] = {0};
-  for (uint8_t addr = 0x08; addr < 0x78; addr++) {
-      if (HAL_I2C_IsDeviceReady(&hi2c1, addr << 1, 1, 10) == HAL_OK)
-          found[addr] = 1;
-  }
+  uint8_t boot_err = 0U;
+  if (SensorHub_Init() != HAL_OK) { boot_err = 1U; }
+  if (Sensors_Init()   != HAL_OK) { boot_err = 1U; }
+  if (boot_err) { boot_error_flash(); }
+
+  // uint8_t found[128] = {0};
+  // for (uint8_t addr = 0x08; addr < 0x78; addr++) {
+  //     if (HAL_I2C_IsDeviceReady(&hi2c1, addr << 1, 1, 10) == HAL_OK)
+  //         found[addr] = 1;
+  // }
 
   HAL_TIM_Base_Start_IT(&htim6);
   /* USER CODE END 2 */
@@ -129,8 +132,9 @@ int main(void)
     /* USER CODE BEGIN 3 */
     if (s_tick) {
       s_tick = 0U;
-      if (SensorHub_Transmit() != HAL_OK) { s_can_err = 1U; }
-      if (Sensors_Transmit()   != HAL_OK) { s_can_err = 1U; }
+      uint8_t err = 0U;
+      if (SensorHub_Transmit() != HAL_OK) { err = 1U; }
+      if (Sensors_Transmit()   != HAL_OK) { err = 1U; }
 
       if (HAL_GetTick() - s_status_tick >= 1000U) {
         s_status_tick = HAL_GetTick();
@@ -145,12 +149,23 @@ int main(void)
         uint32_t mailbox;
         uint8_t  status = Sensors_GetStatus();
 
-        if ((HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U &&
-             HAL_CAN_AddTxMessage(&hcan1, &shdr, &status, &mailbox) != HAL_OK) || s_can_err) {
-          s_can_err = 0U;
-          blink_error_led();
+        if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U &&
+            HAL_CAN_AddTxMessage(&hcan1, &shdr, &status, &mailbox) != HAL_OK) {
+          err = 1U;
         }
       }
+
+      s_tx_err = err;
+    }
+
+    if (s_tx_err) {
+      uint32_t now = HAL_GetTick();
+      if (now - s_led_last_toggle >= 100U) {
+        s_led_last_toggle = now;
+        HAL_GPIO_TogglePin(SENSOR_HUB_ERROR_LED_PORT, SENSOR_HUB_ERROR_LED_PIN);
+      }
+    } else {
+      HAL_GPIO_WritePin(SENSOR_HUB_ERROR_LED_PORT, SENSOR_HUB_ERROR_LED_PIN, GPIO_PIN_RESET);
     }
   }
   /* USER CODE END 3 */
