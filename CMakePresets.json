@@ -40,6 +40,14 @@
             }
         },
         {
+            "name": "dash-Release",
+            "inherits": "default",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "SENSOR_HUB_CONFIG": "dash"
+            }
+        },
+        {
             "name": "default-Release",
             "inherits": "default",
             "cacheVariables": {
@@ -72,6 +80,10 @@
         {
             "name": "default-Debug",
             "configurePreset": "default-Debug"
+        },
+        {
+            "name": "dash-Release",
+            "configurePreset": "dash-Release"
         },
         {
             "name": "default-Release",
