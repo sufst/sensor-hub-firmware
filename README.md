@@ -52,7 +52,10 @@ uv run build Configs/<board_name>.yaml
 (or alternatively `uv run build-all` to build all boards)
 
 4. Flash to the board
-Use STM32CubeProgrammer on the generated .elf in `build/<board_name>_release/sensor-hub-<board_name>.elf`
+
+Either: 
+- Run `uv run flash Configs/<board_name>.yaml` with the ST-link connected
+- Or, use STM32CubeProgrammer on the generated .elf in `build/<board_name>_release/sensor-hub-<board_name>.elf`
 
 5. Update the DBC definition in [sufst/can-defs](https://github.com/sufst/can-defs) (see below)
 
