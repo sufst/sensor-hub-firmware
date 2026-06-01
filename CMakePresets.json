@@ -24,11 +24,11 @@
             }
         },
         {
-            "name": "pedalbox-Debug",
+            "name": "dash-Debug",
             "inherits": "default",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "SENSOR_HUB_CONFIG": "pedalbox"
+                "SENSOR_HUB_CONFIG": "dash"
             }
         },
         {
@@ -37,6 +37,14 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "SENSOR_HUB_CONFIG": "default"
+            }
+        },
+        {
+            "name": "pedalbox-Debug",
+            "inherits": "default",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "SENSOR_HUB_CONFIG": "pedalbox"
             }
         },
         {
@@ -74,12 +82,16 @@
             "configurePreset": "Release"
         },
         {
-            "name": "pedalbox-Debug",
-            "configurePreset": "pedalbox-Debug"
+            "name": "dash-Debug",
+            "configurePreset": "dash-Debug"
         },
         {
             "name": "default-Debug",
             "configurePreset": "default-Debug"
+        },
+        {
+            "name": "pedalbox-Debug",
+            "configurePreset": "pedalbox-Debug"
         },
         {
             "name": "dash-Release",

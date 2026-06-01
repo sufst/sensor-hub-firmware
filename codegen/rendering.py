@@ -4,7 +4,7 @@ import cantools
 from jinja2 import Environment, FileSystemLoader
 
 from codegen.models.config import SensorConfig
-from codegen.models.view import HardwareView, MessageView
+from codegen.models.view import DigitalRead, HardwareView, MessageView
 
 _TEMPLATES_DIR = Path(__file__).parent / "templates"
 
@@ -35,9 +35,13 @@ def render_outputs(
         hardware=hardware,
         status_id_hex=f"0x{status_id:X}",
     )
+    digital_channels = [
+        sig for msg in c_messages for sig in msg.c_signals if isinstance(sig, DigitalRead)
+    ]
     source = env.get_template("sensor_hub.c.j2").render(
         messages=c_messages,
         hardware=hardware,
+        digital_channels=digital_channels,
     )
     dbc = env.get_template("ecu.dbc.j2").render(
         ecu_name=config.ecu_name,
