@@ -48,6 +48,14 @@
             }
         },
         {
+            "name": "back-Release",
+            "inherits": "default",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "SENSOR_HUB_CONFIG": "back"
+            }
+        },
+        {
             "name": "dash-Release",
             "inherits": "default",
             "cacheVariables": {
@@ -92,6 +100,10 @@
         {
             "name": "pedalbox-Debug",
             "configurePreset": "pedalbox-Debug"
+        },
+        {
+            "name": "back-Release",
+            "configurePreset": "back-Release"
         },
         {
             "name": "dash-Release",

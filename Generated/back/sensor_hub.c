@@ -19,10 +19,8 @@ HAL_StatusTypeDef SensorHub_Init(void)
     GPIO_InitTypeDef GPIO_InitStruct = {0};
     GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Pin = GPIO_PIN_6;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-    GPIO_InitStruct.Pin = GPIO_PIN_5;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    GPIO_InitStruct.Pin = GPIO_PIN_0;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
     return HAL_CAN_Start(&hcan1);
 }
@@ -38,12 +36,12 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     hdr.TransmitGlobalTime = DISABLE;
 
     /* --- PEDAL_BOX_ANALOG --- */
-    uint16_t DAMPER_FL = read_adc(ADC_CHANNEL_8);  /* L1 (PB0) */
-    uint16_t DAMPER_FR = read_adc(ADC_CHANNEL_14);  /* L2 (PC4) */
+    uint16_t COOLANT_TEMP_L_IN = read_adc(ADC_CHANNEL_6);  /* L5 (PA6) */
+    uint16_t COOLANT_TEMP_L_OUT = read_adc(ADC_CHANNEL_5);  /* L6 (PA5) */
 
-    data[0] = (uint8_t)((DAMPER_FL & 0xFFU));
-    data[1] = (uint8_t)(((DAMPER_FL >> 8U) & 0x0FU) | ((DAMPER_FR & 0x0FU) << 4U));
-    data[2] = (uint8_t)(((DAMPER_FR >> 4U) & 0xFFU));
+    data[0] = (uint8_t)((COOLANT_TEMP_L_IN & 0xFFU));
+    data[1] = (uint8_t)(((COOLANT_TEMP_L_IN >> 8U) & 0x0FU) | ((COOLANT_TEMP_L_OUT & 0x0FU) << 4U));
+    data[2] = (uint8_t)(((COOLANT_TEMP_L_OUT >> 4U) & 0xFFU));
 
     hdr.StdId = PEDAL_BOX_ANALOG_ID;
     hdr.DLC   = PEDAL_BOX_ANALOG_DLC;
@@ -52,10 +50,9 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     }
 
     /* --- PEDAL_BOX_DIGITAL --- */
-    uint8_t BSPD_STATUS = (uint8_t)HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_6);  /* L5 (PA6) */
-    uint8_t GPS_PPS = (uint8_t)HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5);  /* L6 (PA5) */
+    uint8_t FAN_L_TACH = (uint8_t)HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0);  /* L1 (PB0) */
 
-    data[0] = (uint8_t)((BSPD_STATUS & 0x01U) | ((GPS_PPS & 0x01U) << 1U));
+    data[0] = (uint8_t)((FAN_L_TACH & 0x01U));
 
     hdr.StdId = PEDAL_BOX_DIGITAL_ID;
     hdr.DLC   = PEDAL_BOX_DIGITAL_DLC;

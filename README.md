@@ -1,6 +1,6 @@
 # Generic STM32 Sensor Hub Firmware ([STM32F105RBT](https://www.youtube.com/watch?v=dQw4w9WgXcQ))
 
-Broadcasts sensor data at 1Mbit/s, one reading every 0.5s (2Hz)
+Broadcasts sensor data at 1Mbit/s, readings @ 50Hz by default
 
 ## First time repository setup
 1. Clone the repository

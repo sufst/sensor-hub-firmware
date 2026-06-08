@@ -11,7 +11,7 @@ HAL_StatusTypeDef SensorHub_Init(void)
 {
     /* Override CubeMX timer settings with board-specific config derived from YAML */
     __HAL_TIM_SET_PRESCALER(&htim6, 7199U);
-    __HAL_TIM_SET_AUTORELOAD(&htim6, 4999U);
+    __HAL_TIM_SET_AUTORELOAD(&htim6, 199U);
 
     /* Reconfigure digital input pins: .ioc keeps all L-side pins as ADCx_INx
        (so the .ioc works for any board config), which disables the digital

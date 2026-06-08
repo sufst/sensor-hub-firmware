@@ -18,7 +18,7 @@ hardware:
   # Used for calculating timer prescaler/period values
   clock_speed_hz: 72_000_000
   # Overrides the timer settings before the timer starts
-  broadcast_period_ms: 500
+  broadcast_period_ms: 20
 
 # Channel Definitions
 # id:              Physical label on the board (e.g., L1, R4)
