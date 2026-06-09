@@ -1,11 +1,11 @@
-ecu_name: PEDAL_BOX
+ecu_name: REAR_BOX
 
 # Base IDs for the 11-bit standard CAN frames (0x000 - 0x7FF)
 can_base_ids:
-  analog:  0x670
-  digital: 0x675
-  i2c:     0x676
-  status:  0x679
+  analog:  0x690
+  digital: 0x695
+  i2c:     0x696
+  status:  0x699
 
 # Board-specific hardware overrides
 hardware:

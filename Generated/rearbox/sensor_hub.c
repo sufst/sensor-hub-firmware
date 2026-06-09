@@ -35,7 +35,7 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     hdr.IDE                = CAN_ID_STD;
     hdr.TransmitGlobalTime = DISABLE;
 
-    /* --- PEDAL_BOX_ANALOG --- */
+    /* --- REAR_BOX_ANALOG --- */
     uint16_t COOLANT_TEMP_L_IN = read_adc(ADC_CHANNEL_6);  /* L5 (PA6) */
     uint16_t COOLANT_TEMP_L_OUT = read_adc(ADC_CHANNEL_5);  /* L6 (PA5) */
 
@@ -43,19 +43,19 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     data[1] = (uint8_t)(((COOLANT_TEMP_L_IN >> 8U) & 0x0FU) | ((COOLANT_TEMP_L_OUT & 0x0FU) << 4U));
     data[2] = (uint8_t)(((COOLANT_TEMP_L_OUT >> 4U) & 0xFFU));
 
-    hdr.StdId = PEDAL_BOX_ANALOG_ID;
-    hdr.DLC   = PEDAL_BOX_ANALOG_DLC;
+    hdr.StdId = REAR_BOX_ANALOG_ID;
+    hdr.DLC   = REAR_BOX_ANALOG_DLC;
     if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
         if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
     }
 
-    /* --- PEDAL_BOX_DIGITAL --- */
+    /* --- REAR_BOX_DIGITAL --- */
     uint8_t FAN_L_TACH = (uint8_t)HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0);  /* L1 (PB0) */
 
     data[0] = (uint8_t)((FAN_L_TACH & 0x01U));
 
-    hdr.StdId = PEDAL_BOX_DIGITAL_ID;
-    hdr.DLC   = PEDAL_BOX_DIGITAL_DLC;
+    hdr.StdId = REAR_BOX_DIGITAL_ID;
+    hdr.DLC   = REAR_BOX_DIGITAL_DLC;
     if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
         if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
     }
