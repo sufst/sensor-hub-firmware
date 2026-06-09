@@ -10,7 +10,8 @@ extern "C" {
 #endif
 
 /* CAN message IDs */
-#define REAR_BOX_ANALOG_ID  0x690U
+#define REAR_BOX_ANALOG_1_ID  0x690U
+#define REAR_BOX_ANALOG_2_ID  0x691U
 #define REAR_BOX_DIGITAL_ID  0x695U
 #define SENSOR_HUB_IMU_ACCEL_ID  0x696U
 #define SENSOR_HUB_IMU_GYRO_ID  0x697U
@@ -18,7 +19,8 @@ extern "C" {
 #define SENSOR_HUB_STATUS_ID  0x699U
 
 /* CAN message DLCs (bytes) */
-#define REAR_BOX_ANALOG_DLC  3U
+#define REAR_BOX_ANALOG_1_DLC  8U
+#define REAR_BOX_ANALOG_2_DLC  2U
 #define REAR_BOX_DIGITAL_DLC  1U
 #define SENSOR_HUB_IMU_ACCEL_DLC  6U
 #define SENSOR_HUB_IMU_GYRO_DLC  6U
