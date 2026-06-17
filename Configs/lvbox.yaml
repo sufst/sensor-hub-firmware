@@ -27,14 +27,14 @@ hardware:
 # pulldown:        e.g. "1k", "4.7k", "10k", or "NC", documentation only
 # cap:             e.g. "1u", "100n", or "NC", documentation only
 channels:
-  - { id: "L1", pin: "PB0", vref: 3.3, enabled: true,  name: "TODO_IN_1",   analog: false, series: "3.3k", pullup: "NC",   pulldown: "1k", cap: "NC" }
-  - { id: "L2", pin: "PC4", vref: 3.3, enabled: true,  name: "TODO_IN_2",   analog: false, series: "3.3k", pullup: "NC",   pulldown: "1k", cap: "NC" }
-  - { id: "L3", pin: "PB1", vref: 3.3, enabled: true,  name: "TODO_IN_3",   analog: false, series: "3.3k", pullup: "NC",   pulldown: "1k", cap: "NC" }
-  - { id: "L4", pin: "PC5", vref: 3.3, enabled: true,  name: "TODO_IN_4",   analog: false, series: "3.3k", pullup: "NC",   pulldown: "1k", cap: "NC" }
-  - { id: "L5", pin: "PA6", vref: 3.3, enabled: true,  name: "TODO_TEMP_1", analog: true,  series: "0",    pullup: "10k",  pulldown: "NC", cap: "NC" }
-  - { id: "L6", pin: "PA5", vref: 3.3, enabled: true,  name: "TODO_TEMP_2", analog: true,  series: "0",    pullup: "10k",  pulldown: "NC", cap: "NC" }
-  - { id: "L7", pin: "PA7", vref: 3.3, enabled: true,  name: "TODO_TEMP_3", analog: true,  series: "0",    pullup: "10k",  pulldown: "NC", cap: "NC" }
-  - { id: "L8", pin: "PA4", vref: 3.3, enabled: true,  name: "TODO_TEMP_4", analog: true,  series: "0",    pullup: "10k",  pulldown: "NC", cap: "NC" }
+  - { id: "L1", pin: "PB0", vref: 3.3, enabled: true,  name: "TAP_ESTOPS",   analog: false, series: "1k", pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "L2", pin: "PC4", vref: 3.3, enabled: true,  name: "IMD_FAULT",    analog: false, series: "0",  pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "L3", pin: "PB1", vref: 3.3, enabled: true,  name: "AMS_FAULT",    analog: false, series: "0",  pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "L4", pin: "PC5", vref: 3.3, enabled: true,  name: "TS_DETECTED",  analog: false, series: "0",  pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "L5", pin: "PA6", vref: 3.3, enabled: true,  name: "TAP_LATCHING", analog: false, series: "1k", pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "L6", pin: "PA5", vref: 3.3, enabled: true,  name: "TAP_HVD",      analog: false, series: "1k", pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "L7", pin: "PA7", vref: 3.3, enabled: true,  name: "LVBOX_PWR",    analog: true,  series: "0",  pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "L8", pin: "PA4", vref: 3.3, enabled: true,  name: "TSAL_PWR",     analog: true,  series: "0",  pullup: "NC", pulldown: "NC", cap: "NC" }
   - { id: "R1", pin: "PC2", vref: 3.3, enabled: false, name: "unused", analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
   - { id: "R2", pin: "PC0", vref: 3.3, enabled: false, name: "unused", analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
   - { id: "R3", pin: "PC3", vref: 3.3, enabled: false, name: "unused", analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
