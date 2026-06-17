@@ -27,6 +27,10 @@ HAL_StatusTypeDef SensorHub_Init(void)
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
     GPIO_InitStruct.Pin = GPIO_PIN_5;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+    GPIO_InitStruct.Pin = GPIO_PIN_6;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    GPIO_InitStruct.Pin = GPIO_PIN_5;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
     return HAL_CAN_Start(&hcan1);
 }
@@ -42,17 +46,12 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     hdr.TransmitGlobalTime = DISABLE;
 
     /* --- LV_BOX_ANALOG --- */
-    uint16_t TODO_TEMP_1 = read_adc(ADC_CHANNEL_6);  /* L5 (PA6) */
-    uint16_t TODO_TEMP_2 = read_adc(ADC_CHANNEL_5);  /* L6 (PA5) */
-    uint16_t TODO_TEMP_3 = read_adc(ADC_CHANNEL_7);  /* L7 (PA7) */
-    uint16_t TODO_TEMP_4 = read_adc(ADC_CHANNEL_4);  /* L8 (PA4) */
+    uint16_t LVBOX_PWR = read_adc(ADC_CHANNEL_7);  /* L7 (PA7) */
+    uint16_t TSAL_PWR = read_adc(ADC_CHANNEL_4);  /* L8 (PA4) */
 
-    data[0] = (uint8_t)((TODO_TEMP_1 & 0xFFU));
-    data[1] = (uint8_t)(((TODO_TEMP_1 >> 8U) & 0x0FU) | ((TODO_TEMP_2 & 0x0FU) << 4U));
-    data[2] = (uint8_t)(((TODO_TEMP_2 >> 4U) & 0xFFU));
-    data[3] = (uint8_t)((TODO_TEMP_3 & 0xFFU));
-    data[4] = (uint8_t)(((TODO_TEMP_3 >> 8U) & 0x0FU) | ((TODO_TEMP_4 & 0x0FU) << 4U));
-    data[5] = (uint8_t)(((TODO_TEMP_4 >> 4U) & 0xFFU));
+    data[0] = (uint8_t)((LVBOX_PWR & 0xFFU));
+    data[1] = (uint8_t)(((LVBOX_PWR >> 8U) & 0x0FU) | ((TSAL_PWR & 0x0FU) << 4U));
+    data[2] = (uint8_t)(((TSAL_PWR >> 4U) & 0xFFU));
 
     hdr.StdId = LV_BOX_ANALOG_ID;
     hdr.DLC   = LV_BOX_ANALOG_DLC;
@@ -61,12 +60,14 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     }
 
     /* --- LV_BOX_DIGITAL --- */
-    uint8_t TODO_IN_1 = (uint8_t)HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0);  /* L1 (PB0) */
-    uint8_t TODO_IN_2 = (uint8_t)HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4);  /* L2 (PC4) */
-    uint8_t TODO_IN_3 = (uint8_t)HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1);  /* L3 (PB1) */
-    uint8_t TODO_IN_4 = (uint8_t)HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_5);  /* L4 (PC5) */
+    uint8_t TAP_ESTOPS = (uint8_t)HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0);  /* L1 (PB0) */
+    uint8_t IMD_FAULT = (uint8_t)HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4);  /* L2 (PC4) */
+    uint8_t AMS_FAULT = (uint8_t)HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1);  /* L3 (PB1) */
+    uint8_t TS_DETECTED = (uint8_t)HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_5);  /* L4 (PC5) */
+    uint8_t TAP_LATCHING = (uint8_t)HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_6);  /* L5 (PA6) */
+    uint8_t TAP_HVD = (uint8_t)HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5);  /* L6 (PA5) */
 
-    data[0] = (uint8_t)((TODO_IN_1 & 0x01U) | ((TODO_IN_2 & 0x01U) << 1U) | ((TODO_IN_3 & 0x01U) << 2U) | ((TODO_IN_4 & 0x01U) << 3U));
+    data[0] = (uint8_t)((TAP_ESTOPS & 0x01U) | ((IMD_FAULT & 0x01U) << 1U) | ((AMS_FAULT & 0x01U) << 2U) | ((TS_DETECTED & 0x01U) << 3U) | ((TAP_LATCHING & 0x01U) << 4U) | ((TAP_HVD & 0x01U) << 5U));
 
     hdr.StdId = LV_BOX_DIGITAL_ID;
     hdr.DLC   = LV_BOX_DIGITAL_DLC;

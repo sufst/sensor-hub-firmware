@@ -18,7 +18,7 @@ extern "C" {
 #define SENSOR_HUB_STATUS_ID  0x6A9U
 
 /* CAN message DLCs (bytes) */
-#define LV_BOX_ANALOG_DLC  6U
+#define LV_BOX_ANALOG_DLC  3U
 #define LV_BOX_DIGITAL_DLC  1U
 #define SENSOR_HUB_IMU_ACCEL_DLC  6U
 #define SENSOR_HUB_IMU_GYRO_DLC  6U

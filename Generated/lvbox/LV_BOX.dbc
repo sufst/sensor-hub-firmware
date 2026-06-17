@@ -6,17 +6,17 @@ BS_:
 
 BU_: LV_BOX
 
-BO_ 1696 LV_BOX_ANALOG: 6 LV_BOX
- SG_ TODO_TEMP_1 : 0|12@1+ (0.0008058608058608059,0) [0|3.3] "V" Vector__XXX
- SG_ TODO_TEMP_2 : 12|12@1+ (0.0008058608058608059,0) [0|3.3] "V" Vector__XXX
- SG_ TODO_TEMP_3 : 24|12@1+ (0.0008058608058608059,0) [0|3.3] "V" Vector__XXX
- SG_ TODO_TEMP_4 : 36|12@1+ (0.0008058608058608059,0) [0|3.3] "V" Vector__XXX
+BO_ 1696 LV_BOX_ANALOG: 3 LV_BOX
+ SG_ LVBOX_PWR : 0|12@1+ (0.0008058608058608059,0) [0|3.3] "V" Vector__XXX
+ SG_ TSAL_PWR : 12|12@1+ (0.0008058608058608059,0) [0|3.3] "V" Vector__XXX
 
 BO_ 1701 LV_BOX_DIGITAL: 1 LV_BOX
- SG_ TODO_IN_1 : 0|1@1+ (1,0) [0|1] "bool" Vector__XXX
- SG_ TODO_IN_2 : 1|1@1+ (1,0) [0|1] "bool" Vector__XXX
- SG_ TODO_IN_3 : 2|1@1+ (1,0) [0|1] "bool" Vector__XXX
- SG_ TODO_IN_4 : 3|1@1+ (1,0) [0|1] "bool" Vector__XXX
+ SG_ TAP_ESTOPS : 0|1@1+ (1,0) [0|1] "bool" Vector__XXX
+ SG_ IMD_FAULT : 1|1@1+ (1,0) [0|1] "bool" Vector__XXX
+ SG_ AMS_FAULT : 2|1@1+ (1,0) [0|1] "bool" Vector__XXX
+ SG_ TS_DETECTED : 3|1@1+ (1,0) [0|1] "bool" Vector__XXX
+ SG_ TAP_LATCHING : 4|1@1+ (1,0) [0|1] "bool" Vector__XXX
+ SG_ TAP_HVD : 5|1@1+ (1,0) [0|1] "bool" Vector__XXX
 
 BO_ 1702 LV_BOX_IMU_ACCEL: 6 LV_BOX
  SG_ LV_BOX_ACCEL_X : 0|16@1- (0.000122,0) [-4|4] "g" Vector__XXX
