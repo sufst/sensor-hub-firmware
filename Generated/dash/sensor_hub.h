@@ -19,7 +19,7 @@ extern "C" {
 
 /* CAN message DLCs (bytes) */
 #define DASH_SENSORS_ANALOG_DLC  6U
-#define DASH_SENSORS_DIGITAL_DLC  1U
+#define DASH_SENSORS_DIGITAL_DLC  2U
 #define SENSOR_HUB_IMU_ACCEL_DLC  6U
 #define SENSOR_HUB_IMU_GYRO_DLC  6U
 #define SENSOR_HUB_TEMP_DLC  4U

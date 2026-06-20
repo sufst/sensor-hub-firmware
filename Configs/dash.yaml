@@ -40,7 +40,7 @@ channels:
   - { id: "L6", pin: "PA5", vref: 3.3, enabled: true , name: "TAP_ESTOP"      , analog: false, series: "3.3k", pullup: "NC" , pulldown: "1k", cap: "NC" }
   - { id: "L7", pin: "PA7", vref: 3.3, enabled: true , name: "VCU_RTDS_STATE" , analog: false, series: "3.3k", pullup: "NC" , pulldown: "1k", cap: "NC" }
   - { id: "L8", pin: "PA4", vref: 3.3, enabled: true , name: "TAP_SDC_INERTIA", analog: false, series: "3.3k", pullup: "NC" , pulldown: "1k", cap: "NC" }
-  - { id: "R1", pin: "PC2", vref: 3.3, enabled: false, name: "unused"         , analog: false, series: "0"   , pullup: "NC" , pulldown: "NC", cap: "NC" }
+  - { id: "R1", pin: "PC2", vref: 3.3, enabled: true , name: "FAN_SWITCH"     , analog: false, series: "0"   , pullup: "NC" , pulldown: "10k",cap: "470n"}
   - { id: "R2", pin: "PC0", vref: 3.3, enabled: false, name: "unused"         , analog: false, series: "0"   , pullup: "NC" , pulldown: "NC", cap: "NC" }
   - { id: "R3", pin: "PC3", vref: 3.3, enabled: false, name: "unused"         , analog: false, series: "0"   , pullup: "NC" , pulldown: "NC", cap: "NC" }
   - { id: "R4", pin: "PC1", vref: 3.3, enabled: false, name: "unused"         , analog: false, series: "0"   , pullup: "NC" , pulldown: "NC", cap: "NC" }

@@ -35,6 +35,8 @@ HAL_StatusTypeDef SensorHub_Init(void)
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
     GPIO_InitStruct.Pin = GPIO_PIN_4;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    GPIO_InitStruct.Pin = GPIO_PIN_2;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
     return HAL_CAN_Start(&hcan1);
 }
@@ -77,8 +79,10 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     uint8_t TAP_ESTOP = (uint8_t)HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5);  /* L6 (PA5) */
     uint8_t VCU_RTDS_STATE = (uint8_t)HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_7);  /* L7 (PA7) */
     uint8_t TAP_SDC_INERTIA = (uint8_t)HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4);  /* L8 (PA4) */
+    uint8_t FAN_SWITCH = (uint8_t)HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_2);  /* R1 (PC2) */
 
     data[0] = (uint8_t)((MPDM_PERF_GOOD & 0x01U) | ((HUB_DASHBOX_VS & 0x01U) << 1U) | ((MPDM_PERF_SCS & 0x01U) << 2U) | ((MPDM_8V_GOOD & 0x01U) << 3U) | ((TAP_BOTS & 0x01U) << 4U) | ((TAP_ESTOP & 0x01U) << 5U) | ((VCU_RTDS_STATE & 0x01U) << 6U) | ((TAP_SDC_INERTIA & 0x01U) << 7U));
+    data[1] = (uint8_t)((FAN_SWITCH & 0x01U));
 
     hdr.StdId = DASH_SENSORS_DIGITAL_ID;
     hdr.DLC   = DASH_SENSORS_DIGITAL_DLC;
