@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from typing import Annotated
 from pydantic import Field, StringConstraints, PlainValidator
 
-from codegen.constants import PIN_TO_ADC, MAX_ANALOG_PER_MSG, MAX_DIGITAL_PER_MSG
+from codegen.constants import PIN_TO_ADC, MAX_ANALOG_PER_MSG, MAX_DIGITAL_PER_MSG, MAX_TEMPERATURE_PER_MSG
 
 DbcIdentifier = Annotated[
     str,
@@ -53,16 +53,17 @@ def check_duplicate_pins(channels: list):
 
 def check_hardware_capabilities(channels: list):
     for ch in channels:
-        if ch.analog and ch.pin.raw not in PIN_TO_ADC:
+        if ch.kind in ('analog', 'ntc-therm') and ch.pin.raw not in PIN_TO_ADC:
             raise ValueError(
                 f"Signal '{ch.name}' requested analog, but pin {ch.pin.raw} "
                 f"does not support ADC. Supported: {list(PIN_TO_ADC.keys())}"
             )
 
 
-def check_can_id_collisions(enabled_analog: int, enabled_digital: int, base_ids: dict[str, int]):
+def check_can_id_collisions(enabled_analog: int, enabled_digital: int, enabled_temperature: int, base_ids: dict[str, int]):
     n_analog = math.ceil(enabled_analog / MAX_ANALOG_PER_MSG)
     n_digital = math.ceil(enabled_digital / MAX_DIGITAL_PER_MSG)
+    n_temperature = math.ceil(enabled_temperature / MAX_TEMPERATURE_PER_MSG)
 
     ranges = []
     if n_analog > 0:
@@ -71,6 +72,13 @@ def check_can_id_collisions(enabled_analog: int, enabled_digital: int, base_ids:
     if n_digital > 0:
         ranges.append(
             ("Digital", base_ids["digital"], base_ids["digital"] + n_digital))
+    if n_temperature > 0:
+        if base_ids.get("temperature") is None:
+            raise ValueError(
+                "ntc-therm channels present but no 'temperature' CAN base ID configured in can_base_ids"
+            )
+        ranges.append(
+            ("Temperature", base_ids["temperature"], base_ids["temperature"] + n_temperature))
 
     ranges.append(("I2C", base_ids["i2c"], base_ids["i2c"] + 3))
     ranges.append(("Status", base_ids["status"], base_ids["status"] + 1))

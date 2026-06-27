@@ -4,10 +4,25 @@
 #include "can.h"
 #include "gpio.h"
 #include "tim.h"
+{% if thermistor_channels %}
+#include <math.h>
+{% endif %}
 
 #include "sensor_hub.h"
 #include "hal_util.h"
 
+{% if thermistor_channels %}
+static int16_t ntc_to_degC_x10(uint16_t adc)
+{
+    if (adc == 0U)    return  1250;   /* open circuit / saturated high → clamp to 125 °C */
+    if (adc >= 4095U) return -400;    /* short circuit / saturated low  → clamp to -40 °C */
+    float r     = {{ ntc_r_pullup }}f * (float)adc / (4095.0f - (float)adc);
+    float t_inv = (1.0f / {{ ntc_t0_k }}f) + (logf(r / {{ ntc_r0 }}f) / {{ ntc_beta }}f);
+    float t_c   = (1.0f / t_inv) - 273.15f;
+    return (int16_t)(t_c * 10.0f);
+}
+
+{% endif %}
 HAL_StatusTypeDef SensorHub_Init(void)
 {
     /* Override CubeMX timer settings with board-specific config derived from YAML */
@@ -43,7 +58,9 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
 {% for msg in messages %}
     /* --- {{ msg.name }} --- */
 {% for sig in msg.c_signals %}
-{% if sig.is_analog %}
+{% if sig.kind == 'ntc-therm' %}
+    int16_t {{ sig.name }} = ntc_to_degC_x10(read_adc({{ sig.adc_channel }}));  /* {{ sig.board_id }} ({{ sig.stm32_pin }}) */
+{% elif sig.kind == 'analog' %}
     uint16_t {{ sig.name }} = read_adc({{ sig.adc_channel }});  /* {{ sig.board_id }} ({{ sig.stm32_pin }}) */
 {% else %}
     uint8_t {{ sig.name }} = (uint8_t)HAL_GPIO_ReadPin({{ sig.gpio_port }}, {{ sig.gpio_pin }});  /* {{ sig.board_id }} ({{ sig.stm32_pin }}) */

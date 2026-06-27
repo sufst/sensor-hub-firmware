@@ -1,5 +1,11 @@
-MAX_ANALOG_PER_MSG = 5   # floor(64 bits / 12 bits)
-MAX_DIGITAL_PER_MSG = 64  # 64 * 1-bit
+MAX_ANALOG_PER_MSG = 5        # floor(64 bits / 12 bits)
+MAX_DIGITAL_PER_MSG = 64      # 64 * 1-bit
+MAX_TEMPERATURE_PER_MSG = 4   # 4 * 16 bits = 64 bits
+
+NTC_BETA     = 3950.0   # K
+NTC_R0       = 10000.0  # Ω — nominal resistance at T0
+NTC_T0_K     = 298.15   # K — 25 °C
+NTC_R_PULLUP = 10000.0  # Ω
 
 PIN_TO_ADC = {
     "PA0": "ADC_CHANNEL_0",  "PA1": "ADC_CHANNEL_1",

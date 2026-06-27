@@ -21,25 +21,25 @@ hardware:
 # vref:            Reference voltage for analog scaling (ignored if analog=false)
 # enabled:         If false, the channel is completely omitted from codegen
 # name:            Valid DBC identifier (no spaces, starts with letter)
-# analog:          If true, reads via ADC. If false, reads via HAL_GPIO
+# kind:             Channel kind: 'analog' (ADC) | 'digital' (GPIO) | 'pwm' | 'ntc-therm'
 # series:          e.g. "1k", "4.7k", "10k", or "0", documentation only
-# pullup:          e.g. "1k", "4.7k", "10k", or "NC", documentation only (since you can't do non-linear calculations in a DBC, the STM32F105 has no FPU, it's probably best to do this on the MoTeC e.g. using Calculations -> 2D Tables)
+# pullup:          e.g. "1k", "4.7k", "10k", or "NC", documentation only
 # pulldown:        e.g. "1k", "4.7k", "10k", or "NC", documentation only
 # cap:             e.g. "1u", "100n", or "NC", documentation only
 channels:
-  - { id: "L1", pin: "PB0", vref: 3.3, enabled: true,  name: "DAMPER_FL",   analog: true,  series: "4.7k", pullup: "NC", pulldown: "NC", cap: "1u" }
-  - { id: "L2", pin: "PC4", vref: 3.3, enabled: true,  name: "DAMPER_FR",   analog: true,  series: "4.7k", pullup: "NC", pulldown: "NC", cap: "1u" }
-  - { id: "L3", pin: "PB1", vref: 3.3, enabled: false, name: "unused",      analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
-  - { id: "L4", pin: "PC5", vref: 3.3, enabled: false, name: "unused",      analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
-  - { id: "L5", pin: "PA6", vref: 3.3, enabled: true,  name: "BSPD_STATUS", analog: false, series: "3.3k", pullup: "NC", pulldown: "1k", cap: "NC" }
-  - { id: "L6", pin: "PA5", vref: 3.3, enabled: true,  name: "GPS_PPS",     analog: false, series: "3.3k", pullup: "NC", pulldown: "1k", cap: "NC" }
-  - { id: "L7", pin: "PA7", vref: 3.3, enabled: false, name: "unused",      analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
-  - { id: "L8", pin: "PA4", vref: 3.3, enabled: false, name: "unused",      analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
-  - { id: "R1", pin: "PC2", vref: 3.3, enabled: false, name: "unused",      analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
-  - { id: "R2", pin: "PC0", vref: 3.3, enabled: false, name: "unused",      analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
-  - { id: "R3", pin: "PC3", vref: 3.3, enabled: false, name: "unused",      analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
-  - { id: "R4", pin: "PC1", vref: 3.3, enabled: false, name: "unused",      analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
-  - { id: "R5", pin: "PA0", vref: 3.3, enabled: false, name: "unused",      analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
-  - { id: "R6", pin: "PA2", vref: 3.3, enabled: false, name: "unused",      analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
-  - { id: "R7", pin: "PA1", vref: 3.3, enabled: false, name: "unused",      analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
-  - { id: "R8", pin: "PA3", vref: 3.3, enabled: false, name: "unused",      analog: false, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "L1", pin: "PB0", vref: 3.3, enabled: true,  name: "DAMPER_FL",   kind: analog,  series: "4.7k", pullup: "NC", pulldown: "NC", cap: "1u" }
+  - { id: "L2", pin: "PC4", vref: 3.3, enabled: true,  name: "DAMPER_FR",   kind: analog,  series: "4.7k", pullup: "NC", pulldown: "NC", cap: "1u" }
+  - { id: "L3", pin: "PB1", vref: 3.3, enabled: false, name: "unused",      kind: digital, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "L4", pin: "PC5", vref: 3.3, enabled: false, name: "unused",      kind: digital, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "L5", pin: "PA6", vref: 3.3, enabled: true,  name: "BSPD_STATUS", kind: digital, series: "3.3k", pullup: "NC", pulldown: "1k", cap: "NC" }
+  - { id: "L6", pin: "PA5", vref: 3.3, enabled: true,  name: "GPS_PPS",     kind: digital, series: "3.3k", pullup: "NC", pulldown: "1k", cap: "NC" }
+  - { id: "L7", pin: "PA7", vref: 3.3, enabled: false, name: "unused",      kind: digital, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "L8", pin: "PA4", vref: 3.3, enabled: false, name: "unused",      kind: digital, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "R1", pin: "PC2", vref: 3.3, enabled: false, name: "unused",      kind: digital, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "R2", pin: "PC0", vref: 3.3, enabled: false, name: "unused",      kind: digital, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "R3", pin: "PC3", vref: 3.3, enabled: false, name: "unused",      kind: digital, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "R4", pin: "PC1", vref: 3.3, enabled: false, name: "unused",      kind: digital, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "R5", pin: "PA0", vref: 3.3, enabled: false, name: "unused",      kind: digital, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "R6", pin: "PA2", vref: 3.3, enabled: false, name: "unused",      kind: digital, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "R7", pin: "PA1", vref: 3.3, enabled: false, name: "unused",      kind: digital, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }
+  - { id: "R8", pin: "PA3", vref: 3.3, enabled: false, name: "unused",      kind: digital, series: "NC",   pullup: "NC", pulldown: "NC", cap: "NC" }

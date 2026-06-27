@@ -1,11 +1,12 @@
 import math
+from typing import cast
 
 from codegen.models.config import SensorConfig, ChannelConfig
-from codegen.models.view import AnalogRead, DigitalRead, MessageView, DbcSignalView
-from codegen.constants import MAX_ANALOG_PER_MSG, MAX_DIGITAL_PER_MSG, PIN_TO_ADC
+from codegen.models.view import AnalogRead, DigitalRead, ThermistorRead, MessageView, DbcSignalView
+from codegen.constants import MAX_ANALOG_PER_MSG, MAX_DIGITAL_PER_MSG, MAX_TEMPERATURE_PER_MSG, PIN_TO_ADC
 
 
-def generate_pack_lines(channels: list[ChannelConfig], bit_length: int) -> list[str]:
+def generate_pack_lines(channels: list[ChannelConfig], bit_length: int, var_cast: str | None = None) -> list[str]:
     n_bytes = math.ceil(len(channels) * bit_length / 8)
     lines = []
 
@@ -24,7 +25,7 @@ def generate_pack_lines(channels: list[ChannelConfig], bit_length: int) -> list[
             nbits = ov_end - ov_start
             mask = (1 << nbits) - 1
 
-            t = ch.name
+            t = f"({var_cast}){ch.name}" if var_cast else ch.name
             if shift_out:
                 t = f"({t} >> {shift_out}U)"
             t = f"({t} & 0x{mask:02X}U)"
@@ -116,6 +117,41 @@ def build_messages(config: SensorConfig) -> list[MessageView]:
             dbc_signals=dbc_signals,
             pack_lines=generate_pack_lines(group, bit_length=1)
         ))
+
+    # --- Temperature Messages ---
+    temp_groups = chunk(config.enabled_temperature, MAX_TEMPERATURE_PER_MSG)
+    if temp_groups:
+        temp_base_id = cast(int, config.can_base_ids.temperature)
+        for i, group in enumerate(temp_groups):
+            suffix = f"_TEMPERATURE_{i+1}" if len(temp_groups) > 1 else "_TEMPERATURE"
+            msg_name = f"{config.ecu_name}{suffix}"
+            can_id = temp_base_id + i
+
+            dbc_signals = [DbcSignalView(
+                signal_name=ch.name,
+                start_bit=ch_idx * 16,
+                length=16,
+                scale="0.1",
+                offset="0",
+                min="-40",
+                max="125",
+                unit="degC",
+                value_type="@1-",
+            ) for ch_idx, ch in enumerate(group)]
+
+            messages.append(MessageView(
+                name=msg_name,
+                id_macro=f"{msg_name}_ID",
+                can_id=can_id,
+                can_id_hex=f"0x{can_id:X}",
+                dlc=len(group) * 2,
+                dlc_macro=f"{msg_name}_DLC",
+                c_signals=[ThermistorRead(
+                    name=ch.name, adc_channel=PIN_TO_ADC[ch.pin.raw],
+                    board_id=ch.id, stm32_pin=ch.pin.raw) for ch in group],
+                dbc_signals=dbc_signals,
+                pack_lines=generate_pack_lines(group, bit_length=16, var_cast="uint16_t"),
+            ))
 
     # --- I2C Messages ---
     # The C code handles the actual reading/packing, so c_signals and pack_lines are empty.

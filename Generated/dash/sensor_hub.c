@@ -3,10 +3,20 @@
 #include "can.h"
 #include "gpio.h"
 #include "tim.h"
+#include <math.h>
 
 #include "sensor_hub.h"
 #include "hal_util.h"
 
+static int16_t ntc_to_degC_x10(uint16_t adc)
+{
+    if (adc == 0U)    return  1250;   /* open circuit / saturated high → clamp to 125 °C */
+    if (adc >= 4095U) return -400;    /* short circuit / saturated low  → clamp to -40 °C */
+    float r     = 10000.0f * (float)adc / (4095.0f - (float)adc);
+    float t_inv = (1.0f / 298.15f) + (logf(r / 10000.0f) / 3950.0f);
+    float t_c   = (1.0f / t_inv) - 273.15f;
+    return (int16_t)(t_c * 10.0f);
+}
 HAL_StatusTypeDef SensorHub_Init(void)
 {
     /* Override CubeMX timer settings with board-specific config derived from YAML */
@@ -51,25 +61,6 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     hdr.IDE                = CAN_ID_STD;
     hdr.TransmitGlobalTime = DISABLE;
 
-    /* --- DASH_SENSORS_ANALOG --- */
-    uint16_t DASH_THERM_1 = read_adc(ADC_CHANNEL_0);  /* R5 (PA0) */
-    uint16_t DASH_THERM_2 = read_adc(ADC_CHANNEL_2);  /* R6 (PA2) */
-    uint16_t DASH_THERM_3 = read_adc(ADC_CHANNEL_1);  /* R7 (PA1) */
-    uint16_t DASH_THERM_4 = read_adc(ADC_CHANNEL_3);  /* R8 (PA3) */
-
-    data[0] = (uint8_t)((DASH_THERM_1 & 0xFFU));
-    data[1] = (uint8_t)(((DASH_THERM_1 >> 8U) & 0x0FU) | ((DASH_THERM_2 & 0x0FU) << 4U));
-    data[2] = (uint8_t)(((DASH_THERM_2 >> 4U) & 0xFFU));
-    data[3] = (uint8_t)((DASH_THERM_3 & 0xFFU));
-    data[4] = (uint8_t)(((DASH_THERM_3 >> 8U) & 0x0FU) | ((DASH_THERM_4 & 0x0FU) << 4U));
-    data[5] = (uint8_t)(((DASH_THERM_4 >> 4U) & 0xFFU));
-
-    hdr.StdId = DASH_SENSORS_ANALOG_ID;
-    hdr.DLC   = DASH_SENSORS_ANALOG_DLC;
-    if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
-        if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
-    }
-
     /* --- DASH_SENSORS_DIGITAL --- */
     uint8_t MPDM_PERF_GOOD = (uint8_t)HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0);  /* L1 (PB0) */
     uint8_t HUB_DASHBOX_VS = (uint8_t)HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4);  /* L2 (PC4) */
@@ -86,6 +77,27 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
 
     hdr.StdId = DASH_SENSORS_DIGITAL_ID;
     hdr.DLC   = DASH_SENSORS_DIGITAL_DLC;
+    if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
+        if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
+    }
+
+    /* --- DASH_SENSORS_TEMPERATURE --- */
+    int16_t DASH_THERM_1 = ntc_to_degC_x10(read_adc(ADC_CHANNEL_0));  /* R5 (PA0) */
+    int16_t DASH_THERM_2 = ntc_to_degC_x10(read_adc(ADC_CHANNEL_2));  /* R6 (PA2) */
+    int16_t DASH_THERM_3 = ntc_to_degC_x10(read_adc(ADC_CHANNEL_1));  /* R7 (PA1) */
+    int16_t DASH_THERM_4 = ntc_to_degC_x10(read_adc(ADC_CHANNEL_3));  /* R8 (PA3) */
+
+    data[0] = (uint8_t)(((uint16_t)DASH_THERM_1 & 0xFFU));
+    data[1] = (uint8_t)((((uint16_t)DASH_THERM_1 >> 8U) & 0xFFU));
+    data[2] = (uint8_t)(((uint16_t)DASH_THERM_2 & 0xFFU));
+    data[3] = (uint8_t)((((uint16_t)DASH_THERM_2 >> 8U) & 0xFFU));
+    data[4] = (uint8_t)(((uint16_t)DASH_THERM_3 & 0xFFU));
+    data[5] = (uint8_t)((((uint16_t)DASH_THERM_3 >> 8U) & 0xFFU));
+    data[6] = (uint8_t)(((uint16_t)DASH_THERM_4 & 0xFFU));
+    data[7] = (uint8_t)((((uint16_t)DASH_THERM_4 >> 8U) & 0xFFU));
+
+    hdr.StdId = DASH_SENSORS_TEMPERATURE_ID;
+    hdr.DLC   = DASH_SENSORS_TEMPERATURE_DLC;
     if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
         if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
     }

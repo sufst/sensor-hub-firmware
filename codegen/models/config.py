@@ -1,4 +1,4 @@
-from typing import Self
+from typing import Literal, Optional, Self
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from codegen.validation import DbcIdentifier, Can11BitId, PinField, check_can_id_collisions, check_duplicate_names, check_duplicate_pins, check_hardware_capabilities
@@ -14,7 +14,7 @@ class ChannelConfig(StrictModel):
     vref: float = 3.3
     enabled: bool
     name: DbcIdentifier
-    analog: bool
+    kind: Literal['analog', 'digital', 'pwm', 'ntc-therm']
     series: str = "NC"  # documentation only
     pullup: str = "NC"  # documentation only
     pulldown: str = "NC"  # documentation only
@@ -26,6 +26,7 @@ class BaseIDs(StrictModel):
     digital: Can11BitId
     i2c: Can11BitId
     status: Can11BitId
+    temperature: Optional[Can11BitId] = None
 
 
 class HardwareConfig(StrictModel):
@@ -50,11 +51,15 @@ class SensorConfig(StrictModel):
 
     @property
     def enabled_analog(self) -> list[ChannelConfig]:
-        return [c for c in self.channels if c.enabled and c.analog]
+        return [c for c in self.channels if c.enabled and c.kind == 'analog']
 
     @property
     def enabled_digital(self) -> list[ChannelConfig]:
-        return [c for c in self.channels if c.enabled and not c.analog]
+        return [c for c in self.channels if c.enabled and c.kind == 'digital']
+
+    @property
+    def enabled_temperature(self) -> list[ChannelConfig]:
+        return [c for c in self.channels if c.enabled and c.kind == 'ntc-therm']
 
     @property
     def enabled(self) -> list[ChannelConfig]:
@@ -67,5 +72,6 @@ class SensorConfig(StrictModel):
         check_duplicate_pins(enabled)
         check_hardware_capabilities(enabled)
         check_can_id_collisions(len(self.enabled_analog), len(
-            self.enabled_digital), self.can_base_ids.model_dump())
+            self.enabled_digital), len(self.enabled_temperature),
+            self.can_base_ids.model_dump())
         return self

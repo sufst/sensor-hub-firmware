@@ -1,33 +1,36 @@
 from dataclasses import dataclass
-from typing import Sequence
+from typing import ClassVar, Sequence
 
 
 @dataclass
 class AnalogRead:
+    kind: ClassVar[str] = 'analog'
     name: str
     adc_channel: str
     board_id: str
     stm32_pin: str
 
-    @property
-    def is_analog(self) -> bool:
-        return True
-
 
 @dataclass
 class DigitalRead:
+    kind: ClassVar[str] = 'digital'
     name: str
     gpio_port: str
     gpio_pin: str
     board_id: str
     stm32_pin: str
 
-    @property
-    def is_analog(self) -> bool:
-        return False
+
+@dataclass
+class ThermistorRead:
+    kind: ClassVar[str] = 'ntc-therm'
+    name: str
+    adc_channel: str
+    board_id: str
+    stm32_pin: str
 
 
-ChannelRead = AnalogRead | DigitalRead
+ChannelRead = AnalogRead | DigitalRead | ThermistorRead
 
 
 @dataclass

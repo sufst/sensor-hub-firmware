@@ -3,10 +3,20 @@
 #include "can.h"
 #include "gpio.h"
 #include "tim.h"
+#include <math.h>
 
 #include "sensor_hub.h"
 #include "hal_util.h"
 
+static int16_t ntc_to_degC_x10(uint16_t adc)
+{
+    if (adc == 0U)    return  1250;   /* open circuit / saturated high → clamp to 125 °C */
+    if (adc >= 4095U) return -400;    /* short circuit / saturated low  → clamp to -40 °C */
+    float r     = 10000.0f * (float)adc / (4095.0f - (float)adc);
+    float t_inv = (1.0f / 298.15f) + (logf(r / 10000.0f) / 3950.0f);
+    float t_c   = (1.0f / t_inv) - 273.15f;
+    return (int16_t)(t_c * 10.0f);
+}
 HAL_StatusTypeDef SensorHub_Init(void)
 {
     /* Override CubeMX timer settings with board-specific config derived from YAML */
@@ -37,36 +47,16 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     hdr.IDE                = CAN_ID_STD;
     hdr.TransmitGlobalTime = DISABLE;
 
-    /* --- REAR_BOX_ANALOG_1 --- */
+    /* --- REAR_BOX_ANALOG --- */
     uint16_t DAMPER_RL = read_adc(ADC_CHANNEL_9);  /* L3 (PB1) */
     uint16_t DAMPER_RR = read_adc(ADC_CHANNEL_15);  /* L4 (PC5) */
-    uint16_t COOLANT_TEMP_L_IN = read_adc(ADC_CHANNEL_6);  /* L5 (PA6) */
-    uint16_t COOLANT_TEMP_L_OUT = read_adc(ADC_CHANNEL_5);  /* L6 (PA5) */
-    uint16_t COOLANT_TEMP_R_IN = read_adc(ADC_CHANNEL_7);  /* L7 (PA7) */
 
     data[0] = (uint8_t)((DAMPER_RL & 0xFFU));
     data[1] = (uint8_t)(((DAMPER_RL >> 8U) & 0x0FU) | ((DAMPER_RR & 0x0FU) << 4U));
     data[2] = (uint8_t)(((DAMPER_RR >> 4U) & 0xFFU));
-    data[3] = (uint8_t)((COOLANT_TEMP_L_IN & 0xFFU));
-    data[4] = (uint8_t)(((COOLANT_TEMP_L_IN >> 8U) & 0x0FU) | ((COOLANT_TEMP_L_OUT & 0x0FU) << 4U));
-    data[5] = (uint8_t)(((COOLANT_TEMP_L_OUT >> 4U) & 0xFFU));
-    data[6] = (uint8_t)((COOLANT_TEMP_R_IN & 0xFFU));
-    data[7] = (uint8_t)(((COOLANT_TEMP_R_IN >> 8U) & 0x0FU));
 
-    hdr.StdId = REAR_BOX_ANALOG_1_ID;
-    hdr.DLC   = REAR_BOX_ANALOG_1_DLC;
-    if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
-        if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
-    }
-
-    /* --- REAR_BOX_ANALOG_2 --- */
-    uint16_t COOLANT_TEMP_R_OUT = read_adc(ADC_CHANNEL_4);  /* L8 (PA4) */
-
-    data[0] = (uint8_t)((COOLANT_TEMP_R_OUT & 0xFFU));
-    data[1] = (uint8_t)(((COOLANT_TEMP_R_OUT >> 8U) & 0x0FU));
-
-    hdr.StdId = REAR_BOX_ANALOG_2_ID;
-    hdr.DLC   = REAR_BOX_ANALOG_2_DLC;
+    hdr.StdId = REAR_BOX_ANALOG_ID;
+    hdr.DLC   = REAR_BOX_ANALOG_DLC;
     if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
         if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
     }
@@ -79,6 +69,27 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
 
     hdr.StdId = REAR_BOX_DIGITAL_ID;
     hdr.DLC   = REAR_BOX_DIGITAL_DLC;
+    if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
+        if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
+    }
+
+    /* --- REAR_BOX_TEMPERATURE --- */
+    int16_t COOLANT_TEMP_L_IN = ntc_to_degC_x10(read_adc(ADC_CHANNEL_6));  /* L5 (PA6) */
+    int16_t COOLANT_TEMP_L_OUT = ntc_to_degC_x10(read_adc(ADC_CHANNEL_5));  /* L6 (PA5) */
+    int16_t COOLANT_TEMP_R_IN = ntc_to_degC_x10(read_adc(ADC_CHANNEL_7));  /* L7 (PA7) */
+    int16_t COOLANT_TEMP_R_OUT = ntc_to_degC_x10(read_adc(ADC_CHANNEL_4));  /* L8 (PA4) */
+
+    data[0] = (uint8_t)(((uint16_t)COOLANT_TEMP_L_IN & 0xFFU));
+    data[1] = (uint8_t)((((uint16_t)COOLANT_TEMP_L_IN >> 8U) & 0xFFU));
+    data[2] = (uint8_t)(((uint16_t)COOLANT_TEMP_L_OUT & 0xFFU));
+    data[3] = (uint8_t)((((uint16_t)COOLANT_TEMP_L_OUT >> 8U) & 0xFFU));
+    data[4] = (uint8_t)(((uint16_t)COOLANT_TEMP_R_IN & 0xFFU));
+    data[5] = (uint8_t)((((uint16_t)COOLANT_TEMP_R_IN >> 8U) & 0xFFU));
+    data[6] = (uint8_t)(((uint16_t)COOLANT_TEMP_R_OUT & 0xFFU));
+    data[7] = (uint8_t)((((uint16_t)COOLANT_TEMP_R_OUT >> 8U) & 0xFFU));
+
+    hdr.StdId = REAR_BOX_TEMPERATURE_ID;
+    hdr.DLC   = REAR_BOX_TEMPERATURE_DLC;
     if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
         if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
     }
