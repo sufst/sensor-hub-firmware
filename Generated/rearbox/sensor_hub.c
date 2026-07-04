@@ -17,6 +17,7 @@ static int16_t ntc_to_degC_x10(uint16_t adc)
     float t_c   = (1.0f / t_inv) - 273.15f;
     return (int16_t)(t_c * 10.0f);
 }
+
 HAL_StatusTypeDef SensorHub_Init(void)
 {
     /* Override CubeMX timer settings with board-specific config derived from YAML */
