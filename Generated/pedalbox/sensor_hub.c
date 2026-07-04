@@ -37,7 +37,7 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     hdr.IDE                = CAN_ID_STD;
     hdr.TransmitGlobalTime = DISABLE;
 
-    /* --- PEDAL_BOX_ANALOG --- */
+    /* --- Pedal_Box_Analog --- */
     uint16_t DAMPER_FL = read_adc(ADC_CHANNEL_8);  /* L1 (PB0) */
     uint16_t DAMPER_FR = read_adc(ADC_CHANNEL_14);  /* L2 (PC4) */
 
@@ -45,20 +45,20 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     data[1] = (uint8_t)(((DAMPER_FL >> 8U) & 0x0FU) | ((DAMPER_FR & 0x0FU) << 4U));
     data[2] = (uint8_t)(((DAMPER_FR >> 4U) & 0xFFU));
 
-    hdr.StdId = PEDAL_BOX_ANALOG_ID;
-    hdr.DLC   = PEDAL_BOX_ANALOG_DLC;
+    hdr.StdId = Pedal_Box_Analog_ID;
+    hdr.DLC   = Pedal_Box_Analog_DLC;
     if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
         if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
     }
 
-    /* --- PEDAL_BOX_DIGITAL --- */
+    /* --- Pedal_Box_Digital --- */
     uint8_t BSPD_STATUS = (uint8_t)HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_6);  /* L5 (PA6) */
     uint8_t GPS_PPS = (uint8_t)HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5);  /* L6 (PA5) */
 
     data[0] = (uint8_t)((BSPD_STATUS & 0x01U) | ((GPS_PPS & 0x01U) << 1U));
 
-    hdr.StdId = PEDAL_BOX_DIGITAL_ID;
-    hdr.DLC   = PEDAL_BOX_DIGITAL_DLC;
+    hdr.StdId = Pedal_Box_Digital_ID;
+    hdr.DLC   = Pedal_Box_Digital_DLC;
     if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
         if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
     }

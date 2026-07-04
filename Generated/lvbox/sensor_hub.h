@@ -10,16 +10,16 @@ extern "C" {
 #endif
 
 /* CAN message IDs */
-#define LV_BOX_ANALOG_ID  0x6A0U
-#define LV_BOX_DIGITAL_ID  0x6A5U
+#define LV_Box_Analog_ID  0x6A0U
+#define LV_Box_Digital_ID  0x6A5U
 #define SENSOR_HUB_IMU_ACCEL_ID  0x6A6U
 #define SENSOR_HUB_IMU_GYRO_ID  0x6A7U
 #define SENSOR_HUB_TEMP_ID  0x6A8U
 #define SENSOR_HUB_STATUS_ID  0x6A9U
 
 /* CAN message DLCs (bytes) */
-#define LV_BOX_ANALOG_DLC  3U
-#define LV_BOX_DIGITAL_DLC  1U
+#define LV_Box_Analog_DLC  3U
+#define LV_Box_Digital_DLC  1U
 #define SENSOR_HUB_IMU_ACCEL_DLC  6U
 #define SENSOR_HUB_IMU_GYRO_DLC  6U
 #define SENSOR_HUB_TEMP_DLC  4U

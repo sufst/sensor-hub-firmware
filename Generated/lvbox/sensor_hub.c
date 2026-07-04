@@ -45,7 +45,7 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     hdr.IDE                = CAN_ID_STD;
     hdr.TransmitGlobalTime = DISABLE;
 
-    /* --- LV_BOX_ANALOG --- */
+    /* --- LV_Box_Analog --- */
     uint16_t LVBOX_PWR = read_adc(ADC_CHANNEL_7);  /* L7 (PA7) */
     uint16_t TSAL_PWR = read_adc(ADC_CHANNEL_4);  /* L8 (PA4) */
 
@@ -53,13 +53,13 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     data[1] = (uint8_t)(((LVBOX_PWR >> 8U) & 0x0FU) | ((TSAL_PWR & 0x0FU) << 4U));
     data[2] = (uint8_t)(((TSAL_PWR >> 4U) & 0xFFU));
 
-    hdr.StdId = LV_BOX_ANALOG_ID;
-    hdr.DLC   = LV_BOX_ANALOG_DLC;
+    hdr.StdId = LV_Box_Analog_ID;
+    hdr.DLC   = LV_Box_Analog_DLC;
     if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
         if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
     }
 
-    /* --- LV_BOX_DIGITAL --- */
+    /* --- LV_Box_Digital --- */
     uint8_t TAP_ESTOPS = (uint8_t)HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0);  /* L1 (PB0) */
     uint8_t IMD_FAULT = (uint8_t)HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4);  /* L2 (PC4) */
     uint8_t AMS_FAULT = (uint8_t)HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1);  /* L3 (PB1) */
@@ -69,8 +69,8 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
 
     data[0] = (uint8_t)((TAP_ESTOPS & 0x01U) | ((IMD_FAULT & 0x01U) << 1U) | ((AMS_FAULT & 0x01U) << 2U) | ((TS_DETECTED & 0x01U) << 3U) | ((TAP_LATCHING & 0x01U) << 4U) | ((TAP_HVD & 0x01U) << 5U));
 
-    hdr.StdId = LV_BOX_DIGITAL_ID;
-    hdr.DLC   = LV_BOX_DIGITAL_DLC;
+    hdr.StdId = LV_Box_Digital_ID;
+    hdr.DLC   = LV_Box_Digital_DLC;
     if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
         if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
     }

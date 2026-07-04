@@ -1,0 +1,42 @@
+VERSION ""
+
+NS_ :
+
+BS_:
+
+BU_: Dash_Sensors
+
+BO_ 1669 Dash_Sensors_Digital: 2 Dash_Sensors
+ SG_ MPDM_PERF_GOOD : 0|1@1+ (1,0) [0|1] "bool" Vector__XXX
+ SG_ HUB_DASHBOX_VS : 1|1@1+ (1,0) [0|1] "bool" Vector__XXX
+ SG_ MPDM_PERF_SCS : 2|1@1+ (1,0) [0|1] "bool" Vector__XXX
+ SG_ MPDM_8V_GOOD : 3|1@1+ (1,0) [0|1] "bool" Vector__XXX
+ SG_ TAP_BOTS : 4|1@1+ (1,0) [0|1] "bool" Vector__XXX
+ SG_ TAP_ESTOP : 5|1@1+ (1,0) [0|1] "bool" Vector__XXX
+ SG_ VCU_RTDS_STATE : 6|1@1+ (1,0) [0|1] "bool" Vector__XXX
+ SG_ TAP_SDC_INERTIA : 7|1@1+ (1,0) [0|1] "bool" Vector__XXX
+ SG_ FAN_SWITCH : 8|1@1+ (1,0) [0|1] "bool" Vector__XXX
+
+BO_ 1668 Dash_Sensors_Temperature: 8 Dash_Sensors
+ SG_ DASH_THERM_1 : 0|16@1- (0.1,0) [-40|125] "degC" Vector__XXX
+ SG_ DASH_THERM_2 : 16|16@1- (0.1,0) [-40|125] "degC" Vector__XXX
+ SG_ DASH_THERM_3 : 32|16@1- (0.1,0) [-40|125] "degC" Vector__XXX
+ SG_ DASH_THERM_4 : 48|16@1- (0.1,0) [-40|125] "degC" Vector__XXX
+
+BO_ 1670 Dash_Sensors_IMU_Accel: 6 Dash_Sensors
+ SG_ Dash_Sensors_Accel_X : 0|16@1- (0.000122,0) [-4|4] "g" Vector__XXX
+ SG_ Dash_Sensors_Accel_Y : 16|16@1- (0.000122,0) [-4|4] "g" Vector__XXX
+ SG_ Dash_Sensors_Accel_Z : 32|16@1- (0.000122,0) [-4|4] "g" Vector__XXX
+
+BO_ 1671 Dash_Sensors_IMU_Gyro: 6 Dash_Sensors
+ SG_ Dash_Sensors_Gyro_X : 0|16@1- (0.0175,0) [-500|500] "dps" Vector__XXX
+ SG_ Dash_Sensors_Gyro_Y : 16|16@1- (0.0175,0) [-500|500] "dps" Vector__XXX
+ SG_ Dash_Sensors_Gyro_Z : 32|16@1- (0.0175,0) [-500|500] "dps" Vector__XXX
+
+BO_ 1672 Dash_Sensors_Temp: 4 Dash_Sensors
+ SG_ Dash_Sensors_IMU_Temp : 0|16@1- (0.00390625,25) [-40|85] "degC" Vector__XXX
+ SG_ Dash_Sensors_Ambient_Temp : 16|16@1- (0.0625,0) [-55|125] "degC" Vector__XXX
+
+BO_ 1673 Dash_Sensors_Status: 1 Dash_Sensors
+ SG_ Dash_Sensors_ISM330_OK : 0|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ Dash_Sensors_MCP9800_OK : 1|1@1+ (1,0) [0|1] "" Vector__XXX

@@ -1,0 +1,39 @@
+VERSION ""
+
+NS_ :
+
+BS_:
+
+BU_: Rear_Box
+
+BO_ 1680 Rear_Box_Analog: 3 Rear_Box
+ SG_ DAMPER_RL : 0|12@1+ (0.0008058608058608059,0) [0|3.3] "V" Vector__XXX
+ SG_ DAMPER_RR : 12|12@1+ (0.0008058608058608059,0) [0|3.3] "V" Vector__XXX
+
+BO_ 1685 Rear_Box_Digital: 1 Rear_Box
+ SG_ FAN_L_TACH : 0|1@1+ (1,0) [0|1] "bool" Vector__XXX
+ SG_ FAN_R_TACH : 1|1@1+ (1,0) [0|1] "bool" Vector__XXX
+
+BO_ 1684 Rear_Box_Temperature: 8 Rear_Box
+ SG_ COOLANT_TEMP_L_IN : 0|16@1- (0.1,0) [-40|125] "degC" Vector__XXX
+ SG_ COOLANT_TEMP_L_OUT : 16|16@1- (0.1,0) [-40|125] "degC" Vector__XXX
+ SG_ COOLANT_TEMP_R_IN : 32|16@1- (0.1,0) [-40|125] "degC" Vector__XXX
+ SG_ COOLANT_TEMP_R_OUT : 48|16@1- (0.1,0) [-40|125] "degC" Vector__XXX
+
+BO_ 1686 Rear_Box_IMU_Accel: 6 Rear_Box
+ SG_ Rear_Box_Accel_X : 0|16@1- (0.000122,0) [-4|4] "g" Vector__XXX
+ SG_ Rear_Box_Accel_Y : 16|16@1- (0.000122,0) [-4|4] "g" Vector__XXX
+ SG_ Rear_Box_Accel_Z : 32|16@1- (0.000122,0) [-4|4] "g" Vector__XXX
+
+BO_ 1687 Rear_Box_IMU_Gyro: 6 Rear_Box
+ SG_ Rear_Box_Gyro_X : 0|16@1- (0.0175,0) [-500|500] "dps" Vector__XXX
+ SG_ Rear_Box_Gyro_Y : 16|16@1- (0.0175,0) [-500|500] "dps" Vector__XXX
+ SG_ Rear_Box_Gyro_Z : 32|16@1- (0.0175,0) [-500|500] "dps" Vector__XXX
+
+BO_ 1688 Rear_Box_Temp: 4 Rear_Box
+ SG_ Rear_Box_IMU_Temp : 0|16@1- (0.00390625,25) [-40|85] "degC" Vector__XXX
+ SG_ Rear_Box_Ambient_Temp : 16|16@1- (0.0625,0) [-55|125] "degC" Vector__XXX
+
+BO_ 1689 Rear_Box_Status: 1 Rear_Box
+ SG_ Rear_Box_ISM330_OK : 0|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ Rear_Box_MCP9800_OK : 1|1@1+ (1,0) [0|1] "" Vector__XXX

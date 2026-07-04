@@ -10,18 +10,18 @@ extern "C" {
 #endif
 
 /* CAN message IDs */
-#define GENERIC_SENSOR_HUB_ANALOG_1_ID  0x670U
-#define GENERIC_SENSOR_HUB_ANALOG_2_ID  0x671U
-#define GENERIC_SENSOR_HUB_DIGITAL_ID  0x675U
+#define Generic_Sensor_Hub_Analog_1_ID  0x670U
+#define Generic_Sensor_Hub_Analog_2_ID  0x671U
+#define Generic_Sensor_Hub_Digital_ID  0x675U
 #define SENSOR_HUB_IMU_ACCEL_ID  0x676U
 #define SENSOR_HUB_IMU_GYRO_ID  0x677U
 #define SENSOR_HUB_TEMP_ID  0x678U
 #define SENSOR_HUB_STATUS_ID  0x679U
 
 /* CAN message DLCs (bytes) */
-#define GENERIC_SENSOR_HUB_ANALOG_1_DLC  8U
-#define GENERIC_SENSOR_HUB_ANALOG_2_DLC  8U
-#define GENERIC_SENSOR_HUB_DIGITAL_DLC  1U
+#define Generic_Sensor_Hub_Analog_1_DLC  8U
+#define Generic_Sensor_Hub_Analog_2_DLC  8U
+#define Generic_Sensor_Hub_Digital_DLC  1U
 #define SENSOR_HUB_IMU_ACCEL_DLC  6U
 #define SENSOR_HUB_IMU_GYRO_DLC  6U
 #define SENSOR_HUB_TEMP_DLC  4U

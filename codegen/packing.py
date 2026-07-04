@@ -50,7 +50,7 @@ def build_messages(config: SensorConfig) -> list[MessageView]:
     # --- Analog Messages ---
     analog_groups = chunk(config.enabled_analog, MAX_ANALOG_PER_MSG)
     for i, group in enumerate(analog_groups):
-        suffix = f"_ANALOG_{i+1}" if len(analog_groups) > 1 else "_ANALOG"
+        suffix = f"_Analog_{i+1}" if len(analog_groups) > 1 else "_Analog"
         msg_name = f"{config.ecu_name}{suffix}"
         can_id = config.can_base_ids.analog + i
 
@@ -87,7 +87,7 @@ def build_messages(config: SensorConfig) -> list[MessageView]:
     # --- Digital Messages ---
     digital_groups = chunk(config.enabled_digital, MAX_DIGITAL_PER_MSG)
     for i, group in enumerate(digital_groups):
-        suffix = f"_DIGITAL_{i+1}" if len(digital_groups) > 1 else "_DIGITAL"
+        suffix = f"_Digital_{i+1}" if len(digital_groups) > 1 else "_Digital"
         msg_name = f"{config.ecu_name}{suffix}"
         can_id = config.can_base_ids.digital + i
 
@@ -123,7 +123,7 @@ def build_messages(config: SensorConfig) -> list[MessageView]:
     if temp_groups:
         temp_base_id = cast(int, config.can_base_ids.temperature)
         for i, group in enumerate(temp_groups):
-            suffix = f"_TEMPERATURE_{i+1}" if len(temp_groups) > 1 else "_TEMPERATURE"
+            suffix = f"_Temperature_{i+1}" if len(temp_groups) > 1 else "_Temperature"
             msg_name = f"{config.ecu_name}{suffix}"
             can_id = temp_base_id + i
 
@@ -164,7 +164,7 @@ def build_messages(config: SensorConfig) -> list[MessageView]:
     i2c_base = config.can_base_ids.i2c
 
     messages.append(MessageView(
-        name=f"{config.ecu_name}_IMU_ACCEL",
+        name=f"{config.ecu_name}_IMU_Accel",
         id_macro="SENSOR_HUB_IMU_ACCEL_ID",
         can_id=i2c_base,
         can_id_hex=f"0x{i2c_base:X}",
@@ -173,14 +173,14 @@ def build_messages(config: SensorConfig) -> list[MessageView]:
         c_signals=[],
         pack_lines=[],
         dbc_signals=[
-            DbcSignalView(f"{config.ecu_name}_ACCEL_{ax}", i *
+            DbcSignalView(f"{config.ecu_name}_Accel_{ax}", i *
                           16, 16, "0.000122", "0", "-4", "4", "g", "@1-")
             for i, ax in enumerate(("X", "Y", "Z"))
         ]
     ))
 
     messages.append(MessageView(
-        name=f"{config.ecu_name}_IMU_GYRO",
+        name=f"{config.ecu_name}_IMU_Gyro",
         id_macro="SENSOR_HUB_IMU_GYRO_ID",
         can_id=i2c_base + 1,
         can_id_hex=f"0x{i2c_base + 1:X}",
@@ -189,14 +189,14 @@ def build_messages(config: SensorConfig) -> list[MessageView]:
         c_signals=[],
         pack_lines=[],
         dbc_signals=[
-            DbcSignalView(f"{config.ecu_name}_GYRO_{ax}", i *
+            DbcSignalView(f"{config.ecu_name}_Gyro_{ax}", i *
                           16, 16, "0.0175", "0", "-500", "500", "dps", "@1-")
             for i, ax in enumerate(("X", "Y", "Z"))
         ]
     ))
 
     messages.append(MessageView(
-        name=f"{config.ecu_name}_TEMP",
+        name=f"{config.ecu_name}_Temp",
         id_macro="SENSOR_HUB_TEMP_ID",
         can_id=i2c_base + 2,
         can_id_hex=f"0x{i2c_base + 2:X}",
@@ -205,9 +205,9 @@ def build_messages(config: SensorConfig) -> list[MessageView]:
         c_signals=[],
         pack_lines=[],
         dbc_signals=[
-            DbcSignalView(f"{config.ecu_name}_IMU_TEMP", 0, 16,
+            DbcSignalView(f"{config.ecu_name}_IMU_Temp", 0, 16,
                           "0.00390625", "25", "-40", "85", "degC", "@1-"),
-            DbcSignalView(f"{config.ecu_name}_AMBIENT_TEMP", 16,
+            DbcSignalView(f"{config.ecu_name}_Ambient_Temp", 16,
                           16, "0.0625", "0", "-55", "125", "degC", "@1-")
         ]
     ))

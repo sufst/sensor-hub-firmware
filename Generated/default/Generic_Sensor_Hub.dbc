@@ -1,0 +1,47 @@
+VERSION ""
+
+NS_ :
+
+BS_:
+
+BU_: Generic_Sensor_Hub
+
+BO_ 1648 Generic_Sensor_Hub_Analog_1: 8 Generic_Sensor_Hub
+ SG_ SENSOR_HUB_L1 : 0|12@1+ (0.0008058608058608059,0) [0|3.3] "V" Vector__XXX
+ SG_ SENSOR_HUB_L5 : 12|12@1+ (0.0008058608058608059,0) [0|3.3] "V" Vector__XXX
+ SG_ SENSOR_HUB_L6 : 24|12@1+ (0.0008058608058608059,0) [0|3.3] "V" Vector__XXX
+ SG_ SENSOR_HUB_L7 : 36|12@1+ (0.0008058608058608059,0) [0|3.3] "V" Vector__XXX
+ SG_ SENSOR_HUB_L8 : 48|12@1+ (0.0008058608058608059,0) [0|3.3] "V" Vector__XXX
+
+BO_ 1649 Generic_Sensor_Hub_Analog_2: 8 Generic_Sensor_Hub
+ SG_ SENSOR_HUB_R1 : 0|12@1+ (0.0008058608058608059,0) [0|3.3] "V" Vector__XXX
+ SG_ SENSOR_HUB_R5 : 12|12@1+ (0.0008058608058608059,0) [0|3.3] "V" Vector__XXX
+ SG_ SENSOR_HUB_R6 : 24|12@1+ (0.0008058608058608059,0) [0|3.3] "V" Vector__XXX
+ SG_ SENSOR_HUB_R7 : 36|12@1+ (0.0008058608058608059,0) [0|3.3] "V" Vector__XXX
+ SG_ SENSOR_HUB_R8 : 48|12@1+ (0.0008058608058608059,0) [0|3.3] "V" Vector__XXX
+
+BO_ 1653 Generic_Sensor_Hub_Digital: 1 Generic_Sensor_Hub
+ SG_ SENSOR_HUB_L2 : 0|1@1+ (1,0) [0|1] "bool" Vector__XXX
+ SG_ SENSOR_HUB_L3 : 1|1@1+ (1,0) [0|1] "bool" Vector__XXX
+ SG_ SENSOR_HUB_L4 : 2|1@1+ (1,0) [0|1] "bool" Vector__XXX
+ SG_ SENSOR_HUB_R2 : 3|1@1+ (1,0) [0|1] "bool" Vector__XXX
+ SG_ SENSOR_HUB_R3 : 4|1@1+ (1,0) [0|1] "bool" Vector__XXX
+ SG_ SENSOR_HUB_R4 : 5|1@1+ (1,0) [0|1] "bool" Vector__XXX
+
+BO_ 1654 Generic_Sensor_Hub_IMU_Accel: 6 Generic_Sensor_Hub
+ SG_ Generic_Sensor_Hub_Accel_X : 0|16@1- (0.000122,0) [-4|4] "g" Vector__XXX
+ SG_ Generic_Sensor_Hub_Accel_Y : 16|16@1- (0.000122,0) [-4|4] "g" Vector__XXX
+ SG_ Generic_Sensor_Hub_Accel_Z : 32|16@1- (0.000122,0) [-4|4] "g" Vector__XXX
+
+BO_ 1655 Generic_Sensor_Hub_IMU_Gyro: 6 Generic_Sensor_Hub
+ SG_ Generic_Sensor_Hub_Gyro_X : 0|16@1- (0.0175,0) [-500|500] "dps" Vector__XXX
+ SG_ Generic_Sensor_Hub_Gyro_Y : 16|16@1- (0.0175,0) [-500|500] "dps" Vector__XXX
+ SG_ Generic_Sensor_Hub_Gyro_Z : 32|16@1- (0.0175,0) [-500|500] "dps" Vector__XXX
+
+BO_ 1656 Generic_Sensor_Hub_Temp: 4 Generic_Sensor_Hub
+ SG_ Generic_Sensor_Hub_IMU_Temp : 0|16@1- (0.00390625,25) [-40|85] "degC" Vector__XXX
+ SG_ Generic_Sensor_Hub_Ambient_Temp : 16|16@1- (0.0625,0) [-55|125] "degC" Vector__XXX
+
+BO_ 1657 Generic_Sensor_Hub_Status: 1 Generic_Sensor_Hub
+ SG_ Generic_Sensor_Hub_ISM330_OK : 0|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ Generic_Sensor_Hub_MCP9800_OK : 1|1@1+ (1,0) [0|1] "" Vector__XXX

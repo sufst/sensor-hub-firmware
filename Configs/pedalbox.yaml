@@ -1,4 +1,4 @@
-ecu_name: PEDAL_BOX
+ecu_name: Pedal_Box
 
 # Base IDs for the 11-bit standard CAN frames (0x000 - 0x7FF)
 can_base_ids:

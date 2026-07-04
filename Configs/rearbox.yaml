@@ -1,4 +1,4 @@
-ecu_name: REAR_BOX
+ecu_name: Rear_Box
 
 # Base IDs for the 11-bit standard CAN frames (0x000 - 0x7FF)
 can_base_ids:

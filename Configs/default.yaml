@@ -3,7 +3,7 @@
 # Instructions: Copy to <board_name>.yaml and remove unused channels/fields.
 # ===
 
-ecu_name: GENERIC_SENSOR_HUB
+ecu_name: Generic_Sensor_Hub
 
 # Base IDs for the 11-bit standard CAN frames (0x000 - 0x7FF)
 can_base_ids:

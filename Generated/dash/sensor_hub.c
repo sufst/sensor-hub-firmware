@@ -62,7 +62,7 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     hdr.IDE                = CAN_ID_STD;
     hdr.TransmitGlobalTime = DISABLE;
 
-    /* --- DASH_SENSORS_DIGITAL --- */
+    /* --- Dash_Sensors_Digital --- */
     uint8_t MPDM_PERF_GOOD = (uint8_t)HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0);  /* L1 (PB0) */
     uint8_t HUB_DASHBOX_VS = (uint8_t)HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4);  /* L2 (PC4) */
     uint8_t MPDM_PERF_SCS = (uint8_t)HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1);  /* L3 (PB1) */
@@ -76,13 +76,13 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     data[0] = (uint8_t)((MPDM_PERF_GOOD & 0x01U) | ((HUB_DASHBOX_VS & 0x01U) << 1U) | ((MPDM_PERF_SCS & 0x01U) << 2U) | ((MPDM_8V_GOOD & 0x01U) << 3U) | ((TAP_BOTS & 0x01U) << 4U) | ((TAP_ESTOP & 0x01U) << 5U) | ((VCU_RTDS_STATE & 0x01U) << 6U) | ((TAP_SDC_INERTIA & 0x01U) << 7U));
     data[1] = (uint8_t)((FAN_SWITCH & 0x01U));
 
-    hdr.StdId = DASH_SENSORS_DIGITAL_ID;
-    hdr.DLC   = DASH_SENSORS_DIGITAL_DLC;
+    hdr.StdId = Dash_Sensors_Digital_ID;
+    hdr.DLC   = Dash_Sensors_Digital_DLC;
     if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
         if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
     }
 
-    /* --- DASH_SENSORS_TEMPERATURE --- */
+    /* --- Dash_Sensors_Temperature --- */
     int16_t DASH_THERM_1 = ntc_to_degC_x10(read_adc(ADC_CHANNEL_0));  /* R5 (PA0) */
     int16_t DASH_THERM_2 = ntc_to_degC_x10(read_adc(ADC_CHANNEL_2));  /* R6 (PA2) */
     int16_t DASH_THERM_3 = ntc_to_degC_x10(read_adc(ADC_CHANNEL_1));  /* R7 (PA1) */
@@ -97,8 +97,8 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     data[6] = (uint8_t)(((uint16_t)DASH_THERM_4 & 0xFFU));
     data[7] = (uint8_t)((((uint16_t)DASH_THERM_4 >> 8U) & 0xFFU));
 
-    hdr.StdId = DASH_SENSORS_TEMPERATURE_ID;
-    hdr.DLC   = DASH_SENSORS_TEMPERATURE_DLC;
+    hdr.StdId = Dash_Sensors_Temperature_ID;
+    hdr.DLC   = Dash_Sensors_Temperature_DLC;
     if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
         if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
     }

@@ -45,7 +45,7 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     hdr.IDE                = CAN_ID_STD;
     hdr.TransmitGlobalTime = DISABLE;
 
-    /* --- GENERIC_SENSOR_HUB_ANALOG_1 --- */
+    /* --- Generic_Sensor_Hub_Analog_1 --- */
     uint16_t SENSOR_HUB_L1 = read_adc(ADC_CHANNEL_8);  /* L1 (PB0) */
     uint16_t SENSOR_HUB_L5 = read_adc(ADC_CHANNEL_6);  /* L5 (PA6) */
     uint16_t SENSOR_HUB_L6 = read_adc(ADC_CHANNEL_5);  /* L6 (PA5) */
@@ -61,13 +61,13 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     data[6] = (uint8_t)((SENSOR_HUB_L8 & 0xFFU));
     data[7] = (uint8_t)(((SENSOR_HUB_L8 >> 8U) & 0x0FU));
 
-    hdr.StdId = GENERIC_SENSOR_HUB_ANALOG_1_ID;
-    hdr.DLC   = GENERIC_SENSOR_HUB_ANALOG_1_DLC;
+    hdr.StdId = Generic_Sensor_Hub_Analog_1_ID;
+    hdr.DLC   = Generic_Sensor_Hub_Analog_1_DLC;
     if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
         if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
     }
 
-    /* --- GENERIC_SENSOR_HUB_ANALOG_2 --- */
+    /* --- Generic_Sensor_Hub_Analog_2 --- */
     uint16_t SENSOR_HUB_R1 = read_adc(ADC_CHANNEL_12);  /* R1 (PC2) */
     uint16_t SENSOR_HUB_R5 = read_adc(ADC_CHANNEL_0);  /* R5 (PA0) */
     uint16_t SENSOR_HUB_R6 = read_adc(ADC_CHANNEL_2);  /* R6 (PA2) */
@@ -83,13 +83,13 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     data[6] = (uint8_t)((SENSOR_HUB_R8 & 0xFFU));
     data[7] = (uint8_t)(((SENSOR_HUB_R8 >> 8U) & 0x0FU));
 
-    hdr.StdId = GENERIC_SENSOR_HUB_ANALOG_2_ID;
-    hdr.DLC   = GENERIC_SENSOR_HUB_ANALOG_2_DLC;
+    hdr.StdId = Generic_Sensor_Hub_Analog_2_ID;
+    hdr.DLC   = Generic_Sensor_Hub_Analog_2_DLC;
     if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
         if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
     }
 
-    /* --- GENERIC_SENSOR_HUB_DIGITAL --- */
+    /* --- Generic_Sensor_Hub_Digital --- */
     uint8_t SENSOR_HUB_L2 = (uint8_t)HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4);  /* L2 (PC4) */
     uint8_t SENSOR_HUB_L3 = (uint8_t)HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1);  /* L3 (PB1) */
     uint8_t SENSOR_HUB_L4 = (uint8_t)HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_5);  /* L4 (PC5) */
@@ -99,8 +99,8 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
 
     data[0] = (uint8_t)((SENSOR_HUB_L2 & 0x01U) | ((SENSOR_HUB_L3 & 0x01U) << 1U) | ((SENSOR_HUB_L4 & 0x01U) << 2U) | ((SENSOR_HUB_R2 & 0x01U) << 3U) | ((SENSOR_HUB_R3 & 0x01U) << 4U) | ((SENSOR_HUB_R4 & 0x01U) << 5U));
 
-    hdr.StdId = GENERIC_SENSOR_HUB_DIGITAL_ID;
-    hdr.DLC   = GENERIC_SENSOR_HUB_DIGITAL_DLC;
+    hdr.StdId = Generic_Sensor_Hub_Digital_ID;
+    hdr.DLC   = Generic_Sensor_Hub_Digital_DLC;
     if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
         if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
     }

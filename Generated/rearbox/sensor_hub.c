@@ -48,7 +48,7 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     hdr.IDE                = CAN_ID_STD;
     hdr.TransmitGlobalTime = DISABLE;
 
-    /* --- REAR_BOX_ANALOG --- */
+    /* --- Rear_Box_Analog --- */
     uint16_t DAMPER_RL = read_adc(ADC_CHANNEL_9);  /* L3 (PB1) */
     uint16_t DAMPER_RR = read_adc(ADC_CHANNEL_15);  /* L4 (PC5) */
 
@@ -56,25 +56,25 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     data[1] = (uint8_t)(((DAMPER_RL >> 8U) & 0x0FU) | ((DAMPER_RR & 0x0FU) << 4U));
     data[2] = (uint8_t)(((DAMPER_RR >> 4U) & 0xFFU));
 
-    hdr.StdId = REAR_BOX_ANALOG_ID;
-    hdr.DLC   = REAR_BOX_ANALOG_DLC;
+    hdr.StdId = Rear_Box_Analog_ID;
+    hdr.DLC   = Rear_Box_Analog_DLC;
     if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
         if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
     }
 
-    /* --- REAR_BOX_DIGITAL --- */
+    /* --- Rear_Box_Digital --- */
     uint8_t FAN_L_TACH = (uint8_t)HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0);  /* L1 (PB0) */
     uint8_t FAN_R_TACH = (uint8_t)HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4);  /* L2 (PC4) */
 
     data[0] = (uint8_t)((FAN_L_TACH & 0x01U) | ((FAN_R_TACH & 0x01U) << 1U));
 
-    hdr.StdId = REAR_BOX_DIGITAL_ID;
-    hdr.DLC   = REAR_BOX_DIGITAL_DLC;
+    hdr.StdId = Rear_Box_Digital_ID;
+    hdr.DLC   = Rear_Box_Digital_DLC;
     if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
         if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
     }
 
-    /* --- REAR_BOX_TEMPERATURE --- */
+    /* --- Rear_Box_Temperature --- */
     int16_t COOLANT_TEMP_L_IN = ntc_to_degC_x10(read_adc(ADC_CHANNEL_6));  /* L5 (PA6) */
     int16_t COOLANT_TEMP_L_OUT = ntc_to_degC_x10(read_adc(ADC_CHANNEL_5));  /* L6 (PA5) */
     int16_t COOLANT_TEMP_R_IN = ntc_to_degC_x10(read_adc(ADC_CHANNEL_7));  /* L7 (PA7) */
@@ -89,8 +89,8 @@ HAL_StatusTypeDef SensorHub_Transmit(void)
     data[6] = (uint8_t)(((uint16_t)COOLANT_TEMP_R_OUT & 0xFFU));
     data[7] = (uint8_t)((((uint16_t)COOLANT_TEMP_R_OUT >> 8U) & 0xFFU));
 
-    hdr.StdId = REAR_BOX_TEMPERATURE_ID;
-    hdr.DLC   = REAR_BOX_TEMPERATURE_DLC;
+    hdr.StdId = Rear_Box_Temperature_ID;
+    hdr.DLC   = Rear_Box_Temperature_DLC;
     if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0U) {
         if (HAL_CAN_AddTxMessage(&hcan1, &hdr, data, &mailbox) != HAL_OK) { return HAL_ERROR; }
     }
